@@ -13,14 +13,37 @@ numpy = "^2.0.0"
 pandas = "^2.2.2"
 pyarrow = "^16.1.0"
 pydantic = "^2.8.2"
-pytest = "^8.2.2"
-pytest-asyncio = "^0.23.7"
 requests = "^2.32.3"
 scipy = "^1.14.0"
 statsmodels = "^0.14.2"
 streamlit = "^1.36.0"
 websockets = "^12.0"
 
+[tool.poetry.group.dev.dependencies]
+black = "^24.4.2"
+datamodel-code-generator = "^0.25.8"
+isort = "^5.13.2"
+pre-commit = "^3.7.1"
+pytest = "^8.2.2"
+pytest-asyncio = "^0.23.7"
+python-dotenv = "^1.0.1"
+ruff = "^0.5.1"
+
+[tool.black]
+line-length = 100
+target-version = ['py312']
+
+[tool.isort]
+profile = "black"
+use_parentheses = true
+include_trailing_comma = true
+ensure_newline_before_comments = true
+multi_line_output = 3
+force_grid_wrap = 0
+known_first_party = "xiom"
+
+[tool.ruff]
+target-version = "py312"
 
 [build-system]
 requires = ["poetry-core"]
