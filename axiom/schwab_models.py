@@ -806,7 +806,7 @@ class AssetMainType(Enum):
     OPTION = 'OPTION'
 
 
-class EquityAssetSubTypeEnum(Enum):
+class EquityAssetSubType(Enum):
     COE = 'COE'
     PRF = 'PRF'
     ADR = 'ADR'
@@ -819,34 +819,10 @@ class EquityAssetSubTypeEnum(Enum):
     RGT = 'RGT'
 
 
-class EquityAssetSubType(RootModel):
-    root: Optional[EquityAssetSubTypeEnum] = Field(
-        None, description='Asset Sub Type (only there if applicable)'
-    )
-
-    def __iter__(self):
-        return iter(self.root)
-
-    def __getitem__(self, item):
-        return self.root[item]
-
-
-class MutualFundAssetSubTypeEnum(Enum):
+class MutualFundAssetSubType(Enum):
     OEF = 'OEF'
     CEF = 'CEF'
     MMF = 'MMF'
-
-
-class MutualFundAssetSubType(RootModel):
-    root: Optional[MutualFundAssetSubTypeEnum] = Field(
-        None, description='Asset Sub Type (only there if applicable)'
-    )
-
-    def __iter__(self):
-        return iter(self.root)
-
-    def __getitem__(self, item):
-        return self.root[item]
 
 
 class ContractType(Enum):
@@ -866,25 +842,12 @@ class ExpirationType(Enum):
     W = 'W'
 
 
-class FundStrategyEnum(Enum):
+class FundStrategy(Enum):
     A = 'A'
     L = 'L'
     P = 'P'
     Q = 'Q'
     S = 'S'
-
-
-class FundStrategy(RootModel):
-    root: Optional[FundStrategyEnum] = Field(
-        None,
-        description='FundStrategy "A" - Active "L" - Leveraged "P" - Passive "Q" - Quantitative "S" - Short',
-    )
-
-    def __iter__(self):
-        return iter(self.root)
-
-    def __getitem__(self, item):
-        return self.root[item]
 
 
 class ExerciseType(Enum):
@@ -903,21 +866,9 @@ class DivFreq(Enum):
     integer_None = None
 
 
-class QuoteTypeEnum(Enum):
+class QuoteType(Enum):
     NBBO = 'NBBO'
     NFL = 'NFL'
-
-
-class QuoteType(RootModel):
-    root: Optional[QuoteTypeEnum] = Field(
-        None, description='NBBO - realtime, NFL - Non-fee liable quote.'
-    )
-
-    def __iter__(self):
-        return iter(self.root)
-
-    def __getitem__(self, item):
-        return self.root[item]
 
 
 class Status(Enum):
@@ -1318,3 +1269,360 @@ class QuoteResponse(RootModel):
 
     def __getitem__(self, item):
         return self.root[item]
+
+
+class PriceLevel(BaseModel):
+    price: Optional[float] = None
+    aggregate_size: Optional[int] = None
+    market_maker_count: Optional[int] = None
+    market_makers: Optional[List[dict]] = None
+
+
+class BookContent(BaseModel):
+    symbol: Optional[str] = None
+    market_snapshot_time: Optional[int] = None
+    bid_side_levels: Optional[List[PriceLevel]] = None
+    ask_side_levels: Optional[List[PriceLevel]] = None
+
+
+class ChartContent(BaseModel):
+    key: Optional[str] = None
+    open_price: Optional[float] = None
+    high_price: Optional[float] = None
+    low_price: Optional[float] = None
+    close_price: Optional[float] = None
+    volume: Optional[float] = None
+    sequence: Optional[int] = None
+    chart_time: Optional[int] = None
+    chart_day: Optional[int] = None
+
+
+class ScreenerItem(BaseModel):
+    description: Optional[str] = None
+    last_price: Optional[float] = None
+    market_share: Optional[float] = None
+    net_change: Optional[float] = None
+    net_percent_change: Optional[float] = None
+    symbol: Optional[str] = None
+    total_volume: Optional[int] = None
+    trades: Optional[int] = None
+    volume: Optional[int] = None
+
+
+class ScreenerContent(BaseModel):
+    symbol: Optional[str] = None
+    timestamp: Optional[int] = None
+    sort_field: Optional[str] = None
+    frequency: Optional[int] = None
+    items: Optional[List[ScreenerItem]] = None
+
+
+class AccountActivityContent(BaseModel):
+    seq: Optional[int] = None
+    key: Optional[str] = None
+    account: Optional[str] = None
+    message_type: Optional[str] = None
+    message_data: Optional[Union[dict, str]] = None
+
+
+# Specific Models
+class LevelOneEquityContent(BaseModel):
+    ASK_ID: Optional[str] = None
+    ASK_MIC_ID: Optional[str] = None
+    ASK_PRICE: Optional[float] = None
+    ASK_SIZE: Optional[int] = None
+    ASK_TIME_MILLIS: Optional[int] = None
+    BID_ID: Optional[str] = None
+    BID_MIC_ID: Optional[str] = None
+    BID_PRICE: Optional[float] = None
+    BID_SIZE: Optional[int] = None
+    BID_TIME_MILLIS: Optional[int] = None
+    LAST_ID: Optional[str] = None
+    LAST_MIC_ID: Optional[str] = None
+    LAST_SIZE: Optional[int] = None
+    MARK: Optional[float] = None
+    MARK_CHANGE: Optional[float] = None
+    MARK_CHANGE_PERCENT: Optional[float] = None
+    QUOTE_TIME_MILLIS: Optional[int] = None
+    REGULAR_MARKET_LAST_SIZE: Optional[int] = None
+    REGULAR_MARKET_TRADE_MILLIS: Optional[int] = None
+    TOTAL_VOLUME: Optional[int] = None
+    TRADE_TIME_MILLIS: Optional[int] = None
+    key: Optional[str] = None
+
+
+class LevelOneEquity(BaseModel):
+    command: Optional[str] = None
+    content: Optional[List[LevelOneEquityContent]] = None
+    service: Optional[str] = None
+    timestamp: Optional[int] = None
+
+
+class LevelOneOptionsContent(BaseModel):
+    symbol: Optional[str] = None
+    description: Optional[str] = None
+    bid_price: Optional[float] = None
+    ask_price: Optional[float] = None
+    last_price: Optional[float] = None
+    high_price: Optional[float] = None
+    low_price: Optional[float] = None
+    close_price: Optional[float] = None
+    total_volume: Optional[int] = None
+    open_interest: Optional[int] = None
+    volatility: Optional[float] = None
+    money_intrinsic_value: Optional[float] = None
+    expiration_year: Optional[int] = None
+    multiplier: Optional[float] = None
+    digits: Optional[int] = None
+    open_price: Optional[float] = None
+    bid_size: Optional[int] = None
+    ask_size: Optional[int] = None
+    last_size: Optional[int] = None
+    net_change: Optional[float] = None
+    strike_price: Optional[float] = None
+    contract_type: Optional[str] = None
+    underlying: Optional[str] = None
+    expiration_month: Optional[int] = None
+    deliverables: Optional[str] = None
+    time_value: Optional[float] = None
+    expiration_day: Optional[int] = None
+    days_to_expiration: Optional[int] = None
+    delta: Optional[float] = None
+    gamma: Optional[float] = None
+    theta: Optional[float] = None
+    vega: Optional[float] = None
+    rho: Optional[float] = None
+    security_status: Optional[str] = None
+    theoretical_option_value: Optional[float] = None
+    underlying_price: Optional[float] = None
+    uv_expiration_type: Optional[str] = None
+    mark_price: Optional[float] = None
+    quote_time_in_long: Optional[int] = None
+    trade_time_in_long: Optional[int] = None
+    exchange: Optional[str] = None
+    exchange_name: Optional[str] = None
+    last_trading_day: Optional[int] = None
+    settlement_type: Optional[str] = None
+    net_percent_change: Optional[float] = None
+    mark_price_net_change: Optional[float] = None
+    mark_price_percent_change: Optional[float] = None
+    implied_yield: Optional[float] = None
+    is_penny_pilot: Optional[bool] = None
+    option_root: Optional[str] = None
+    week_high: Optional[float] = None
+    week_low: Optional[float] = None
+    indicative_ask_price: Optional[float] = None
+    indicative_bid_price: Optional[float] = None
+    indicative_quote_time: Optional[int] = None
+    exercise_type: Optional[str] = None
+
+
+class LevelOneOptions(BaseModel):
+    command: Optional[str] = None
+    content: Optional[List[LevelOneOptionsContent]] = None
+    service: Optional[str] = None
+    timestamp: Optional[int] = None
+
+
+class LevelOneFuturesContent(BaseModel):
+    symbol: Optional[str] = None
+    bid_price: Optional[float] = None
+    ask_price: Optional[float] = None
+    last_price: Optional[float] = None
+    bid_size: Optional[int] = None
+    ask_size: Optional[int] = None
+    bid_id: Optional[str] = None
+    ask_id: Optional[str] = None
+    total_volume: Optional[int] = None
+    last_size: Optional[int] = None
+    quote_time: Optional[int] = None
+    trade_time: Optional[int] = None
+    high_price: Optional[float] = None
+    low_price: Optional[float] = None
+    close_price: Optional[float] = None
+    exchange_id: Optional[str] = None
+    description: Optional[str] = None
+    last_id: Optional[str] = None
+    open_price: Optional[float] = None
+    net_change: Optional[float] = None
+    future_percent_change: Optional[float] = None
+    exchange_name: Optional[str] = None
+    security_status: Optional[str] = None
+    open_interest: Optional[int] = None
+    mark: Optional[float] = None
+    tick: Optional[float] = None
+    tick_amount: Optional[float] = None
+    product: Optional[str] = None
+    future_price_format: Optional[str] = None
+    future_trading_hours: Optional[str] = None
+    future_is_tradable: Optional[bool] = None
+    future_multiplier: Optional[float] = None
+    future_is_active: Optional[bool] = None
+    future_settlement_price: Optional[float] = None
+    future_active_symbol: Optional[str] = None
+    future_expiration_date: Optional[int] = None
+    expiration_style: Optional[str] = None
+    ask_time: Optional[int] = None
+    bid_time: Optional[int] = None
+    quoted_in_session: Optional[bool] = None
+    settlement_date: Optional[int] = None
+
+
+class LevelOneFutures(BaseModel):
+    command: Optional[str] = None
+    content: Optional[List[LevelOneFuturesContent]] = None
+    service: Optional[str] = None
+    timestamp: Optional[int] = None
+
+
+class LevelOneFuturesOptionsContent(BaseModel):
+    symbol: Optional[str] = None
+    bid_price: Optional[float] = None
+    ask_price: Optional[float] = None
+    last_price: Optional[float] = None
+    bid_size: Optional[int] = None
+    ask_size: Optional[int] = None
+    bid_id: Optional[str] = None
+    ask_id: Optional[str] = None
+    total_volume: Optional[int] = None
+    last_size: Optional[int] = None
+    quote_time: Optional[int] = None
+    trade_time: Optional[int] = None
+    high_price: Optional[float] = None
+    low_price: Optional[float] = None
+    close_price: Optional[float] = None
+    exchange_id: Optional[str] = None
+    description: Optional[str] = None
+    last_id: Optional[str] = None
+    open_price: Optional[float] = None
+    open_interest: Optional[float] = None
+    mark: Optional[float] = None
+    tick: Optional[float] = None
+    tick_amount: Optional[float] = None
+    future_multiplier: Optional[float] = None
+    future_settlement_price: Optional[float] = None
+    underlying_symbol: Optional[str] = None
+    strike_price: Optional[float] = None
+    future_expiration_date: Optional[int] = None
+    expiration_style: Optional[str] = None
+    contract_type: Optional[str] = None
+    security_status: Optional[str] = None
+    exchange: Optional[str] = None
+    exchange_name: Optional[str] = None
+    last_trading_day: Optional[int] = None
+    settlement_type: Optional[str] = None
+    net_percent_change: Optional[float] = None
+    mark_price_net_change: Optional[float] = None
+    mark_price_percent_change: Optional[float] = None
+    implied_yield: Optional[float] = None
+    is_penny_pilot: Optional[bool] = None
+    option_root: Optional[str] = None
+    week_high: Optional[float] = None
+    week_low: Optional[float] = None
+    indicative_ask_price: Optional[float] = None
+    indicative_bid_price: Optional[float] = None
+    indicative_quote_time: Optional[int] = None
+    exercise_type: Optional[str] = None
+
+
+class LevelOneFuturesOptions(BaseModel):
+    command: Optional[str] = None
+    content: Optional[List[LevelOneFuturesOptionsContent]] = None
+    service: Optional[str] = None
+    timestamp: Optional[int] = None
+
+
+class LevelOneForexContent(BaseModel):
+    symbol: Optional[str] = None
+    bid_price: Optional[float] = None
+    ask_price: Optional[float] = None
+    last_price: Optional[float] = None
+    bid_size: Optional[int] = None
+    ask_size: Optional[int] = None
+    total_volume: Optional[int] = None
+    last_size: Optional[int] = None
+    quote_time: Optional[int] = None
+    trade_time: Optional[int] = None
+    high_price: Optional[float] = None
+    low_price: Optional[float] = None
+    close_price: Optional[float] = None
+    exchange: Optional[str] = None
+    description: Optional[str] = None
+    open_price: Optional[float] = None
+    net_change: Optional[float] = None
+    percent_change: Optional[float] = None
+    exchange_name: Optional[str] = None
+    digits: Optional[int] = None
+    security_status: Optional[str] = None
+    tick: Optional[float] = None
+    tick_amount: Optional[float] = None
+    product: Optional[str] = None
+    trading_hours: Optional[str] = None
+    is_tradable: Optional[bool] = None
+    market_maker: Optional[str] = None
+    week_high: Optional[float] = None
+    week_low: Optional[float] = None
+    mark: Optional[float] = None
+
+
+class LevelOneForex(BaseModel):
+    command: Optional[str] = None
+    content: Optional[List[LevelOneForexContent]] = None
+    service: Optional[str] = None
+    timestamp: Optional[int] = None
+
+
+class NYSEBook(BaseModel):
+    command: Optional[str] = None
+    content: Optional[List[BookContent]] = None
+    service: Optional[str] = None
+    timestamp: Optional[int] = None
+
+
+class NASDAQBook(BaseModel):
+    command: Optional[str] = None
+    content: Optional[List[BookContent]] = None
+    service: Optional[str] = None
+    timestamp: Optional[int] = None
+
+
+class OptionsBook(BaseModel):
+    command: Optional[str] = None
+    content: Optional[List[BookContent]] = None
+    service: Optional[str] = None
+    timestamp: Optional[int] = None
+
+
+class ChartEquity(BaseModel):
+    command: Optional[str] = None
+    content: Optional[List[ChartContent]] = None
+    service: Optional[str] = None
+    timestamp: Optional[int] = None
+
+
+class ChartFutures(BaseModel):
+    command: Optional[str] = None
+    content: Optional[List[ChartContent]] = None
+    service: Optional[str] = None
+    timestamp: Optional[int] = None
+
+
+class ScreenerEquity(BaseModel):
+    command: Optional[str] = None
+    content: Optional[List[ScreenerContent]] = None
+    service: Optional[str] = None
+    timestamp: Optional[int] = None
+
+
+class ScreenerOption(BaseModel):
+    command: Optional[str] = None
+    content: Optional[List[ScreenerContent]] = None
+    service: Optional[str] = None
+    timestamp: Optional[int] = None
+
+
+class AccountActivity(BaseModel):
+    command: Optional[str] = None
+    content: Optional[List[AccountActivityContent]] = None
+    service: Optional[str] = None
+    timestamp: Optional[int] = None
