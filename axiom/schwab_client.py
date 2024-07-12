@@ -2,6 +2,7 @@
 
 import os
 
+from aiolimiter import AsyncLimiter
 from schwab import auth
 from schwab.client import AsyncClient
 
@@ -11,6 +12,9 @@ SCHWAB_APP_KEY = os.environ["SCHWAB_APP_KEY"]
 SCHWAB_SECRET = os.environ["SCHWAB_SECRET"]
 SCHWAB_REDIRECT_URI = "https://127.0.0.1"
 SCHWAB_TOKEN_FP = DATA_DIR.joinpath("schwab.token")
+
+# Schwab API Rate Limit is 120 requests per minute
+sch_limiter = AsyncLimiter(max_rate=120, time_period=60)
 
 try:
     sch: AsyncClient = auth.client_from_token_file(
@@ -22,5 +26,5 @@ except FileNotFoundError:
         app_secret=SCHWAB_SECRET,
         callback_url=SCHWAB_REDIRECT_URI,
         token_path=SCHWAB_TOKEN_FP,
-        asyncio=True
+        asyncio=True,
     )
