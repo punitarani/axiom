@@ -1,4 +1,7 @@
 ### Project
+data/
+
+# Schwab Secrets
 schwab.token
 schwab-openapi.json
 
