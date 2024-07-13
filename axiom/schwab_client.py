@@ -18,7 +18,10 @@ sch_limiter = AsyncLimiter(max_rate=120, time_period=60)
 
 try:
     sch: AsyncClient = auth.client_from_token_file(
-        token_path=SCHWAB_TOKEN_FP, api_key=SCHWAB_APP_KEY, app_secret=SCHWAB_SECRET
+        token_path=SCHWAB_TOKEN_FP,
+        api_key=SCHWAB_APP_KEY,
+        app_secret=SCHWAB_SECRET,
+        asyncio=True,
     )
 except FileNotFoundError:
     sch: AsyncClient = auth.client_from_manual_flow(
