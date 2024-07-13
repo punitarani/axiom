@@ -4,7 +4,6 @@ import asyncio
 import ssl
 from pathlib import Path
 
-import schwab
 from httpx import Response
 from schwab.client import AsyncClient
 from schwab.streaming import StreamClient
@@ -14,6 +13,7 @@ from axiom.schwab_client import (
     SCHWAB_REDIRECT_URI,
     SCHWAB_SECRET,
     SCHWAB_TOKEN_FP,
+    sch,
     sch_limiter,
 )
 from axiom.schwab_models import LevelOneEquity
@@ -41,12 +41,7 @@ class EquityLevelOneStream:
 
     async def initialize(self):
         """Create the streaming client"""
-        self.schwab_client: AsyncClient = schwab.auth.client_from_token_file(
-            token_path=self.token_path,
-            api_key=self.api_key,
-            app_secret=self.client_secret,
-            asyncio=True,
-        )
+        self.schwab_client: AsyncClient = sch
 
         async with sch_limiter:
             account_info_data: Response = await self.schwab_client.get_account_numbers()
