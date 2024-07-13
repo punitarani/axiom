@@ -805,6 +805,17 @@ files = [
 ]
 
 [[package]]
+name = "diskcache"
+version = "5.6.3"
+description = "Disk Cache -- Disk and file backed persistent cache."
+optional = false
+python-versions = ">=3"
+files = [
+    {file = "diskcache-5.6.3-py3-none-any.whl", hash = "sha256:5e31b2d5fbad117cc363ebaf6b689474db18a1f6438bc82358b024abd4c2ca19"},
+    {file = "diskcache-5.6.3.tar.gz", hash = "sha256:2c3a3fa2743d8535d832ec61c2054a1641f41775aa7c556758a109941e33e4fc"},
+]
+
+[[package]]
 name = "distlib"
 version = "0.3.8"
 description = "Distribution utilities"
@@ -4446,4 +4457,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12 <3.13"
-content-hash = "22fcf39a879df66e6a2dafd434b726688f591a94e2092e430fe3f7a68c37f80a"
+content-hash = "6e84f1178493dfc0156e4c15a7a9fe79f8b2fefa72ffbf8bad6b8f4cc6d1eeed"
