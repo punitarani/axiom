@@ -5,8 +5,33 @@ from datetime import datetime, timedelta
 import pytz
 
 from axiom.schwab_client import sch, sch_limiter
-from axiom.schwab_models import CandleList
-from axiom.store.cache import daily_price_history_cache
+from axiom.schwab_models import CandleList, InstrumentResponse
+from axiom.store.cache import daily_price_history_cache, instrument_cache
+
+
+async def get_equity_info(symbol: str) -> InstrumentResponse:
+    """Get equity information for a given symbol."""
+
+    # Check the cache first
+    try:
+        data = instrument_cache[symbol]
+    except KeyError:
+        async with sch_limiter:
+            response = await sch.get_instruments(
+                symbols=symbol,
+                projection=sch.Instrument.Projection.FUNDAMENTAL,
+            )
+            data = response.json().get("instruments", [])[0]
+
+    # Save the response to the cache with expiration at 1am EST
+    now = datetime.now(pytz.timezone("US/Eastern"))
+    expire_at: datetime = now.replace(hour=1, minute=0, second=0, microsecond=0)
+    if now >= expire_at:
+        expire_at += timedelta(days=1)
+    expire: float = (expire_at - now).total_seconds()
+    instrument_cache.set(symbol, data, expire=expire)
+
+    return InstrumentResponse.model_validate(data)
 
 
 async def get_daily_price_history(symbol: str) -> CandleList:

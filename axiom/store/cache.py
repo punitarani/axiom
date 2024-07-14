@@ -8,3 +8,4 @@ CACHE_DIR = DATA_DIR.joinpath("cache")
 
 level_one_cache = diskcache.Cache(directory=CACHE_DIR.joinpath("level_one"))
 daily_price_history_cache = diskcache.Cache(directory=CACHE_DIR.joinpath("daily_price_history"))
+instrument_cache = diskcache.Cache(directory=CACHE_DIR.joinpath("instrument"))
