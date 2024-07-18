@@ -44,7 +44,7 @@ async def get_weekly_resistance(symbol: str = "SPY") -> JSONResponse:
     return JSONResponse(
         content={
             "symbol": symbol,
-            "next_week_high": float(next_week_high),
-            "next_week_low": float(next_week_low),
+            "high": float(next_week_high),
+            "low": float(next_week_low),
         }
     )
