@@ -1,7 +1,5 @@
 """axiom/schwab_auth.py"""
 
-"""axiom/schwab_client.py"""
-
 import os
 
 from schwab import auth
