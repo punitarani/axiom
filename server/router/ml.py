@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 import pandas as pd
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
-from mdata.equity import get_daily_price_history
+
+from axiom.mdata.equity import get_daily_price_history
 
 from ..load import get_weekly_resistance_model
 

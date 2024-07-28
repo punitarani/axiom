@@ -3,10 +3,11 @@
 import os
 
 from authlib.integrations.httpx_client import OAuth2Client
-from config import DATA_DIR
 from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse, Response
 from schwab.auth import __fetch_and_register_token_from_redirect
+
+from axiom.config import DATA_DIR
 
 router = APIRouter(prefix="/auth")
 
