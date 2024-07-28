@@ -8,7 +8,7 @@ import asyncio
 import os
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from axiom.ws.equity_level_one import run_equity_level_one_stream
@@ -19,14 +19,13 @@ from .router import auth_router, equity_router, ml_router, stream_router
 MODE = os.getenv("MODE", "prod")
 PORT = int(os.getenv("PORT", 8123))
 
+stream_task = None
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):  # noqa (allow app to be unused)
     await load_models()
-    task = asyncio.create_task(run_equity_level_one_stream())
     yield
-    task.cancel()
-    await task
 
 
 app = FastAPI(title="Axiom", lifespan=lifespan)
@@ -57,6 +56,28 @@ app.include_router(auth_router)
 app.include_router(equity_router)
 app.include_router(ml_router)
 app.include_router(stream_router)
+
+
+@app.post("/start")
+async def start_stream():
+    global stream_task
+    if stream_task is None or stream_task.done():
+        stream_task = asyncio.create_task(run_equity_level_one_stream())
+        return {"message": "Stream started"}
+    else:
+        raise HTTPException(status_code=400, detail="Stream is already running")
+
+
+@app.post("/stop")
+async def stop_stream():
+    global stream_task
+    if stream_task is not None and not stream_task.done():
+        stream_task.cancel()
+        await stream_task
+        return {"message": "Stream stopped"}
+    else:
+        raise HTTPException(status_code=400, detail="Stream is not running")
+
 
 if __name__ == "__main__":
     import uvicorn
