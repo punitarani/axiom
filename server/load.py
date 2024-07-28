@@ -1,5 +1,6 @@
 """server/load.py"""
 
+import json
 import os
 
 from axiom.config import DATA_DIR
@@ -14,9 +15,15 @@ def download_schwab_token() -> None:
     if schwab_token is None:
         raise ValueError("SCHWAB_TOKEN environment variable not set")
 
+    # Parse the string as json
+    try:
+        schwab_token = json.loads(schwab_token)
+    except json.JSONDecodeError:
+        raise ValueError("SCHWAB_TOKEN environment variable is not valid JSON")
+
     if schwab_token is not None:
         with open(SCHWAB_TOKEN_FP, "w") as f:
-            f.write(schwab_token)
+            json.dump(schwab_token, f)
             return
 
 
