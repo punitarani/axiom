@@ -25,4 +25,4 @@ jobs:
         run: docker build . --file Dockerfile --tag axiom:latest
 
       - name: Push the Docker image
-        run: docker push axiom:latest
+        run: docker push punitarani/axiom:latest
