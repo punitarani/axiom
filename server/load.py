@@ -11,11 +11,13 @@ _weekly_resistance_model: WeeklyResistanceModel | None = None
 
 def download_schwab_token() -> None:
     schwab_token = os.getenv("SCHWAB_TOKEN", None)
+    if schwab_token is None:
+        raise ValueError("SCHWAB_TOKEN environment variable not set")
+
     if schwab_token is not None:
         with open(SCHWAB_TOKEN_FP, "w") as f:
             f.write(schwab_token)
-
-    raise ValueError("SCHWAB_TOKEN environment variable not set")
+            return
 
 
 async def load_models():
