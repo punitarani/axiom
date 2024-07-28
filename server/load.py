@@ -1,7 +1,6 @@
 """server/load.py"""
 
-from config import DATA_DIR
-
+from axiom.config import DATA_DIR
 from axiom.models import WeeklyResistanceModel
 
 _weekly_resistance_model: WeeklyResistanceModel | None = None
@@ -13,10 +12,10 @@ async def load_models():
 
 async def load_weekly_resistance_model():
     weekly_resistance_model_high_fp = DATA_DIR.joinpath(
-        "models", f"weekly_resistance_model_high_SPY.json"
+        "models", "weekly_resistance_model_high_SPY.json"
     )
     weekly_resistance_model_low_fp = DATA_DIR.joinpath(
-        "models", f"weekly_resistance_model_low_SPY.json"
+        "models", "weekly_resistance_model_low_SPY.json"
     )
 
     # Load the pipeline
