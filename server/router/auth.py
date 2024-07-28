@@ -26,16 +26,16 @@ SCHWAB_OAUTH_URL = "https://api.schwabapi.com/v1/oauth/authorize"
 
 oauth = OAuth2Client(SCHWAB_APP_KEY, redirect_uri=REDIRECT_URI)
 
-auth_router = APIRouter()
+router = APIRouter(prefix="/auth")
 
 
-@auth_router.get("/auth/schwab")
+@router.get("/schwab")
 async def auth_schwab() -> RedirectResponse:
     authorization_url, state = oauth.create_authorization_url(SCHWAB_OAUTH_URL)
     return RedirectResponse(url=authorization_url)
 
 
-@auth_router.get("/auth/callback")
+@router.get("/callback")
 async def auth_callback(request: Request) -> Response:
     redirected_url = request.url
 
