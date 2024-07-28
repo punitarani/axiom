@@ -10,7 +10,7 @@ format:
 
 # Lint code using ruff
 lint:
-	poetry run ruff $(TARGETS)
+	poetry run ruff check $(TARGETS)
 
 # Display help message by default
 .DEFAULT_GOAL := help
