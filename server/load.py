@@ -1,9 +1,21 @@
 """server/load.py"""
 
+import os
+
 from axiom.config import DATA_DIR
 from axiom.models import WeeklyResistanceModel
+from axiom.schwab_client import SCHWAB_TOKEN_FP
 
 _weekly_resistance_model: WeeklyResistanceModel | None = None
+
+
+def download_schwab_token() -> None:
+    schwab_token = os.getenv("SCHWAB_TOKEN", None)
+    if schwab_token is not None:
+        with open(SCHWAB_TOKEN_FP, "w") as f:
+            f.write(schwab_token)
+
+    raise ValueError("SCHWAB_TOKEN environment variable not set")
 
 
 async def load_models():

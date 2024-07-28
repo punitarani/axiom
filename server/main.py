@@ -12,7 +12,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from .load import load_models
+from .load import download_schwab_token, load_models
 from .router import auth_router, equity_router, ml_router, stream_router
 
 MODE = os.getenv("MODE", "prod")
@@ -23,6 +23,8 @@ stream_task: Task | None = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):  # noqa (allow app to be unused)
+    if MODE == "prod":
+        download_schwab_token()
     await load_models()
     yield
 
