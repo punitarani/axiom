@@ -16,18 +16,11 @@ SCHWAB_TOKEN_FP = DATA_DIR.joinpath("schwab.token")
 # Schwab API Rate Limit is 120 requests per minute
 sch_limiter = AsyncLimiter(max_rate=120, time_period=60)
 
-try:
-    sch: AsyncClient = auth.client_from_token_file(
+
+def get_schwab_client() -> AsyncClient:
+    return auth.client_from_token_file(
         token_path=SCHWAB_TOKEN_FP,
         api_key=SCHWAB_APP_KEY,
         app_secret=SCHWAB_SECRET,
-        asyncio=True,
-    )
-except FileNotFoundError:
-    sch: AsyncClient = auth.client_from_manual_flow(
-        api_key=SCHWAB_APP_KEY,
-        app_secret=SCHWAB_SECRET,
-        callback_url=SCHWAB_REDIRECT_URI,
-        token_path=SCHWAB_TOKEN_FP,
         asyncio=True,
     )

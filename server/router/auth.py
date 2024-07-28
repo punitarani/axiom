@@ -2,7 +2,7 @@
 
 import os
 
-from authlib.oauth2 import OAuth2Client
+from authlib.integrations.httpx_client import OAuth2Client
 from config import DATA_DIR
 from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse, Response
@@ -13,7 +13,7 @@ router = APIRouter(prefix="/auth")
 HOST = os.getenv("HOST", "localhost")
 PORT = os.getenv("PORT", "8123")
 if HOST == "localhost":
-    REDIRECT_URI = f"http://{HOST}:{PORT}/auth/callback"
+    REDIRECT_URI = f"https://127.0.0.1:{PORT}/auth/callback"
 else:
     REDIRECT_URI = f"https://{HOST}/auth/callback"
 

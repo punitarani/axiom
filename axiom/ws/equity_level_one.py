@@ -13,7 +13,7 @@ from axiom.schwab_client import (
     SCHWAB_REDIRECT_URI,
     SCHWAB_SECRET,
     SCHWAB_TOKEN_FP,
-    sch,
+    get_schwab_client,
     sch_limiter,
 )
 from axiom.schwab_models import LevelOneEquity
@@ -41,6 +41,8 @@ class EquityLevelOneStream:
 
     async def initialize(self):
         """Create the streaming client"""
+        sch = get_schwab_client()
+
         self.schwab_client: AsyncClient = sch
 
         async with sch_limiter:

@@ -4,13 +4,14 @@ from datetime import datetime, timedelta
 
 import pytz
 
-from axiom.schwab_client import sch, sch_limiter
+from axiom.schwab_client import get_schwab_client, sch_limiter
 from axiom.schwab_models import CandleList, InstrumentResponse
 from axiom.store.cache import daily_price_history_cache, instrument_cache
 
 
 async def get_equity_info(symbol: str) -> InstrumentResponse:
     """Get equity information for a given symbol."""
+    sch = get_schwab_client()
 
     # Check the cache first
     try:
@@ -36,6 +37,7 @@ async def get_equity_info(symbol: str) -> InstrumentResponse:
 
 async def get_daily_price_history(symbol: str) -> CandleList:
     """Get daily price history for a given symbol."""
+    sch = get_schwab_client()
 
     # Check the cache first
     try:
