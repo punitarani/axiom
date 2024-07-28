@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from axiom.ws.equity_level_one import run_equity_level_one_stream
 
 from .load import load_models
-from .router import equity_router, ml_router, stream_router
+from .router import auth_router, equity_router, ml_router, stream_router
 
 MODE = os.getenv("MODE", "prod")
 PORT = int(os.getenv("PORT", 8123))
@@ -53,6 +53,7 @@ app.add_middleware(
 )
 
 # Add routers
+app.include_router(auth_router)
 app.include_router(equity_router)
 app.include_router(ml_router)
 app.include_router(stream_router)
