@@ -5,7 +5,7 @@ import datetime
 import json
 
 import pytz
-from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from axiom.store.cache import level_one_cache
 
