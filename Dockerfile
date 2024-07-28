@@ -3,18 +3,20 @@ FROM python:3.12-slim-bullseye
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
     build-essential \
     libhdf5-dev \
-    pkg-config \
-    && rm -rf /var/lib/apt/lists/*
+    pkg-config && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy the pyproject.toml and poetry.lock files to the container
 COPY pyproject.toml poetry.lock* /app/
 
-# Install Poetry and dependencies
-RUN pip install poetry
-RUN poetry config virtualenvs.create false && poetry install --no-dev --no-interaction --no-ansi
+# Install Poetry and dependencies in a single RUN step to reduce layers
+RUN pip install --no-cache-dir poetry && \
+    poetry config virtualenvs.create false && \
+    poetry install --no-dev --no-interaction --no-ansi
 
 # Copy the rest of the application code
 COPY . /app
