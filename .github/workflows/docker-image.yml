@@ -15,6 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
       - name: Set up cache for Poetry
         uses: actions/cache@v3
         with:
@@ -26,7 +31,9 @@ jobs:
             ${{ runner.os }}-poetry-
 
       - name: Install Poetry
-        run: pip install poetry
+        run: |
+          pip install poetry
+          poetry --version
 
       - name: Install dependencies
         run: poetry install --no-dev --no-interaction --no-ansi
