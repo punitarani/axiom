@@ -5,6 +5,7 @@ FastAPI app for axiom
 """
 
 import asyncio
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -14,6 +15,9 @@ from axiom.ws.equity_level_one import run_equity_level_one_stream
 
 from .load import load_models
 from .router import equity_router, ml_router, stream_router
+
+MODE = os.getenv("MODE", "prod")
+PORT = int(os.getenv("PORT", 8123))
 
 
 @asynccontextmanager
@@ -28,10 +32,18 @@ async def lifespan(app: FastAPI):  # noqa (allow app to be unused)
 app = FastAPI(title="Axiom", lifespan=lifespan)
 
 # Add CORS middleware
-origins = [
-    "http://localhost",
-    "http://localhost:3000",
-]
+if MODE == "dev":
+    origins = [
+        "http://localhost",
+        "http://localhost:3000",
+        "http://localhost:3123",
+        "https://axiom.punitarani.com",
+    ]
+else:
+    origins = [
+        "https://axiom.punitarani.com",
+    ]
+
 app.add_middleware(
     CORSMiddleware,  # noinspection PyTypeChecker
     allow_origins=origins,
@@ -44,3 +56,10 @@ app.add_middleware(
 app.include_router(equity_router)
 app.include_router(ml_router)
 app.include_router(stream_router)
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        app="server.main:app", host="0.0.0.0", port=PORT, reload=True if MODE == "dev" else False
+    )
