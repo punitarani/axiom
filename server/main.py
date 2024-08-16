@@ -5,6 +5,7 @@ FastAPI app for axiom
 """
 
 import asyncio
+import logging
 import os
 from contextlib import asynccontextmanager
 
@@ -18,6 +19,10 @@ from .router import auth_router, equity_router, ml_router, stream_router
 
 MODE = os.getenv("MODE", "prod")
 PORT = int(os.getenv("PORT", 8123))
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
@@ -45,6 +50,8 @@ else:
     origins = [
         "https://axiom.punitarani.com",
     ]
+
+logger.info(f"Running in {MODE} mode. Allowed origins: {origins}")
 
 app.add_middleware(
     CORSMiddleware,  # noinspection PyTypeChecker
