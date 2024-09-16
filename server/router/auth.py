@@ -38,7 +38,7 @@ async def auth_schwab() -> RedirectResponse:
 
 @router.get("/callback")
 async def auth_callback(request: Request) -> Response:
-    redirected_url = request.url
+    redirected_url = str(request.url)
 
     success = __fetch_and_register_token_from_redirect(
         oauth=oauth,
