@@ -41,9 +41,5 @@ def set_schwab_token_in_db(token: dict) -> None:
         supabase.storage.from_(TOKEN_BUCKET).upload(
             file=f,
             path=TOKEN_FP,
-            file_options={
-                "cache-control": "0",
-                "content-type": "application/json",
-                "upsert": True,
-            },
+            file_options={"cache-control": "0", "upsert": "true"}
         )
