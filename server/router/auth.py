@@ -5,7 +5,7 @@ import os
 
 from authlib.integrations.httpx_client import OAuth2Client
 from fastapi import APIRouter, Request
-from fastapi.responses import RedirectResponse, Response
+from fastapi.responses import JSONResponse, RedirectResponse
 from schwab.auth import __fetch_and_register_token_from_redirect
 
 from axiom.config import DATA_DIR
@@ -39,7 +39,7 @@ async def auth_schwab() -> RedirectResponse:
 
 
 @router.get("/callback")
-async def auth_callback(request: Request) -> Response:
+async def auth_callback(request: Request) -> JSONResponse:
     redirected_url = str(request.url)
 
     success = __fetch_and_register_token_from_redirect(
@@ -61,6 +61,6 @@ async def auth_callback(request: Request) -> Response:
         # Set the token in the db
         set_schwab_token_in_db(token)
 
-        return Response(status_code=200)
+        return JSONResponse(status_code=200, content={"message": "Authentication successful"})
     else:
-        return Response(status_code=500)
+        return JSONResponse(status_code=500, content={"message": "Authentication failed"})
