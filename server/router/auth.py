@@ -1,5 +1,6 @@
 """server/router/auth.py"""
 
+import json
 import os
 
 from authlib.integrations.httpx_client import OAuth2Client
@@ -8,6 +9,7 @@ from fastapi.responses import RedirectResponse, Response
 from schwab.auth import __fetch_and_register_token_from_redirect
 
 from axiom.config import DATA_DIR
+from axiom.db.auth import set_schwab_token_in_db
 
 router = APIRouter(prefix="/auth")
 
@@ -52,6 +54,13 @@ async def auth_callback(request: Request) -> Response:
     )
 
     if success:
+        # Get the token from the file
+        with open(SCHWAB_TOKEN_FP, "r", encoding="utf-8") as f:
+            token: dict = json.load(f)
+
+        # Set the token in the db
+        set_schwab_token_in_db(token)
+
         return Response(status_code=200)
     else:
         return Response(status_code=500)
