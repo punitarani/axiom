@@ -30,6 +30,7 @@ supabase = "^2.7.4"
 torch = "^2.3.1"
 websockets = "^12.0"
 xgboost = "^2.1.0"
+plotly = "^5.24.1"
 
 [tool.poetry.group.dev.dependencies]
 black = { extras = ["jupyter"], version = "^24.4.2" }
