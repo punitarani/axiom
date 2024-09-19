@@ -12,6 +12,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from axiom.config import ensure_env_vars
 from axiom.ws.equity_level_one import run_equity_level_one_stream
 
 from .load import download_schwab_token, load_models
@@ -27,11 +28,21 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):  # noqa (allow app to be unused)
+    ensure_env_vars()
+
+    # Download the Schwab token
     if MODE == "prod":
         download_schwab_token()
+
+    # Load the ML models
     await load_models()
+
+    # Start the Equity Level One stream
     task = asyncio.create_task(run_equity_level_one_stream())
+
     yield
+
+    # Cancel the Equity Level One stream
     task.cancel()
     await task
 
