@@ -831,8 +831,13 @@ class ContractType(Enum):
 
 
 class SettlementType(Enum):
-    A = 'A'
-    P = 'P'
+    A = 'A'  # AM settlement
+    P = 'P'  # PM settlement
+
+    @classmethod
+    def _missing_(cls, value):
+        # Default to PM settlement if input is invalid
+        return cls.P
 
 
 class ExpirationType(Enum):
@@ -920,6 +925,9 @@ class ExchangeName(Enum):
     PAC = 'PAC'
     OPR = 'OPR'
     BATS = 'BATS'
+    NYSE = 'NYSE'
+    NYSE_ARCA = 'NYSE Arca'
+    NASDAQ = 'NASDAQ'
 
 
 class Underlying(BaseModel):
