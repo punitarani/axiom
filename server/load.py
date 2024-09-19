@@ -1,30 +1,18 @@
 """server/load.py"""
 
-import json
-import os
-
 from axiom.config import DATA_DIR
+from axiom.db.auth import get_schwab_token_from_db
 from axiom.models import WeeklyResistanceModel
-from axiom.schwab_client import SCHWAB_TOKEN_FP
 
 _weekly_resistance_model: WeeklyResistanceModel | None = None
 
 
 def download_schwab_token() -> None:
-    schwab_token = os.getenv("SCHWAB_TOKEN", None)
+    # Get the token from the database
+    # It also sets the local token file
+    schwab_token = get_schwab_token_from_db()
     if schwab_token is None:
-        raise ValueError("SCHWAB_TOKEN environment variable not set")
-
-    # Parse the string as json
-    try:
-        schwab_token = json.loads(schwab_token)
-    except json.JSONDecodeError:
-        raise ValueError("SCHWAB_TOKEN environment variable is not valid JSON")
-
-    if schwab_token is not None:
-        with open(SCHWAB_TOKEN_FP, "w") as f:
-            json.dump(schwab_token, f)
-            return
+        raise ValueError("Failed to retrieve Schwab token from database")
 
 
 async def load_models():
