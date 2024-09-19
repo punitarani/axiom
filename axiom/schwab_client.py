@@ -10,7 +10,7 @@ from axiom.config import DATA_DIR
 
 SCHWAB_APP_KEY = os.environ["SCHWAB_APP_KEY"]
 SCHWAB_SECRET = os.environ["SCHWAB_SECRET"]
-SCHWAB_REDIRECT_URI = "https://127.0.0.1"
+SCHWAB_REDIRECT_URI = "https://127.0.0.1:8123"
 SCHWAB_TOKEN_FP = DATA_DIR.joinpath("schwab.token")
 
 # Schwab API Rate Limit is 120 requests per minute
