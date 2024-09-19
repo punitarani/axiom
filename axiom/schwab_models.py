@@ -973,21 +973,21 @@ class OptionContract(BaseModel):
     symbol: Optional[str] = None
     description: Optional[str] = None
     exchangeName: Optional[str] = None
-    bidPrice: Optional[float] = None
-    askPrice: Optional[float] = None
-    lastPrice: Optional[float] = None
-    markPrice: Optional[float] = None
-    bidSize: Optional[int] = None
-    askSize: Optional[int] = None
-    lastSize: Optional[int] = None
+    bid: Optional[float] = None
+    ask: Optional[float] = None
+    last: Optional[float] = None
+    mark: Optional[float] = None
+    bidSize: Optional[int | str] = None
+    askSize: Optional[int | str] = None
+    bidAskSize: Optional[int | str] = None
+    lastSize: Optional[int | str] = None
     highPrice: Optional[float] = None
     lowPrice: Optional[float] = None
     openPrice: Optional[float] = None
     closePrice: Optional[float] = None
     totalVolume: Optional[int] = None
-    tradeDate: Optional[float] = None
-    quoteTimeInLong: Optional[int] = None
     tradeTimeInLong: Optional[int] = None
+    quoteTimeInLong: Optional[int] = None
     netChange: Optional[float] = None
     volatility: Optional[float] = None
     delta: Optional[float] = None
@@ -997,11 +997,11 @@ class OptionContract(BaseModel):
     rho: Optional[float] = None
     timeValue: Optional[float] = None
     openInterest: Optional[float] = None
-    isInTheMoney: Optional[bool] = None
+    inTheMoney: Optional[bool] = None
     theoreticalOptionValue: Optional[float] = None
     theoreticalVolatility: Optional[float] = None
-    isMini: Optional[bool] = None
-    isNonStandard: Optional[bool] = None
+    mini: Optional[bool] = None
+    nonStandard: Optional[bool] = None
     optionDeliverablesList: Optional[List[OptionDeliverables]] = None
     strikePrice: Optional[float] = None
     expirationDate: Optional[str] = None
@@ -1015,9 +1015,13 @@ class OptionContract(BaseModel):
     percentChange: Optional[float] = None
     markChange: Optional[float] = None
     markPercentChange: Optional[float] = None
-    isPennyPilot: Optional[bool] = None
+    pennyPilot: Optional[bool] = None
     intrinsicValue: Optional[float] = None
+    extrinsicValue: Optional[float] = None
     optionRoot: Optional[str] = None
+    exerciseType: Optional[str] = None
+    high52Week: Optional[float] = None
+    low52Week: Optional[float] = None
 
 
 class Expiration(BaseModel):
@@ -1191,6 +1195,24 @@ class OptionContractMap(RootModel):
 
     def __getitem__(self, item):
         return self.root[item]
+
+    def __len__(self):
+        return len(self.root)
+
+    def __contains__(self, item):
+        return item in self.root
+
+    def keys(self):
+        return self.root.keys()
+
+    def values(self):
+        return self.root.values()
+
+    def items(self):
+        return self.root.items()
+
+    def get(self, key, default=None):
+        return self.root.get(key, default)
 
 
 class ExpirationChain(BaseModel):
