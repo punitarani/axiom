@@ -39,5 +39,11 @@ def set_schwab_token_in_db(token: dict) -> None:
     # Upload the file to the bucket
     with open(DATA_DIR.joinpath(TOKEN_FP), "rb") as f:
         supabase.storage.from_(TOKEN_BUCKET).upload(
-            file=f, path=TOKEN_FP, file_options={"content-type": "application/json"}
+            file=f,
+            path=TOKEN_FP,
+            file_options={
+                "cache-control": "0",
+                "content-type": "application/json",
+                "upsert": True,
+            },
         )
