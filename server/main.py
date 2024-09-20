@@ -16,7 +16,7 @@ from axiom.config import ensure_env_vars
 from axiom.ws.equity_level_one import run_equity_level_one_stream
 
 from .load import download_schwab_token, load_models
-from .router import auth_router, equity_router, ml_router, stream_router
+from .router import account_router, auth_router, equity_router, ml_router, stream_router
 
 MODE = os.getenv("MODE", "prod")
 PORT = int(os.getenv("PORT", 8123))
@@ -78,6 +78,7 @@ app.add_middleware(
 )
 
 # Add routers
+app.include_router(account_router)
 app.include_router(auth_router)
 app.include_router(equity_router)
 app.include_router(ml_router)

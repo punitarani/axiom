@@ -4,6 +4,7 @@ server.router package
 FastAPI Server Routers
 """
 
+from .account import router as account_router
 from .auth import router as auth_router
 from .equity import router as equity_router
 from .ml import router as ml_router
