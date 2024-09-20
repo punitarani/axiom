@@ -9,6 +9,7 @@ package-mode = false
 python = "^3.12 <3.13"
 aiolimiter = "^1.1.0"
 backoff = "^2.2.1"
+dask = {extras = ["distributed"], version = "^2024.9.0"}
 diskcache = "^5.6.3"
 fastapi = "^0.111.0"
 fastapi-cache2 = "^0.2.1"
@@ -19,6 +20,7 @@ mpld3 = "^0.5.10"
 notebook = "^7.2.1"
 numpy = "^1.26.0"
 pandas = "^2.2.2"
+plotly = "^5.24.1"
 pyarrow = "^16.1.0"
 pydantic = "^2.8.2"
 requests = "^2.32.3"
@@ -33,7 +35,6 @@ torch = "^2.3.1"
 tqdm = "^4.66.5"
 websockets = "^12.0"
 xgboost = "^2.1.0"
-plotly = "^5.24.1"
 
 [tool.poetry.group.dev.dependencies]
 black = { extras = ["jupyter"], version = "^24.4.2" }
