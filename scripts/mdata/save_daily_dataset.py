@@ -1,19 +1,14 @@
 #! /usr/bin/env python3
 
 import asyncio
-import io
 import os
-import tempfile
 
 import backoff
 import pandas as pd
-import pyarrow as pa
-import pyarrow.parquet as pq
 from tqdm.asyncio import tqdm
 
 from axiom.config import DATA_DIR
 from axiom.schwab_client import get_schwab_client, sch_limiter
-from axiom.supabase import supabase
 
 sch = get_schwab_client()
 
@@ -34,23 +29,13 @@ async def download_equity_data(symbol: str):
         candles = data.get("candles", [])
         df = pd.DataFrame(candles)
 
-        SUPABASE_BUCKET = "daily-data"
+        # Create the directory if it doesn't exist
+        save_dir = DATA_DIR.joinpath("mdata", "daily-data")
+        save_dir.mkdir(parents=True, exist_ok=True)
 
-        # Create a temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".parquet") as tmp_file:
-            temp_path = tmp_file.name
-
-            # Save DataFrame as parquet to the temporary file
-            df.to_parquet(temp_path, engine="pyarrow")
-
-        try:
-            # Upload the temporary file to Supabase
-            file_name = f"{symbol}.parquet"
-            with open(temp_path, "rb") as f:
-                supabase.storage.from_(SUPABASE_BUCKET).upload(file_name, f)
-        finally:
-            # Delete the temporary file
-            os.unlink(temp_path)
+        # Save DataFrame as parquet
+        file_path = save_dir / f"{symbol}.parquet"
+        df.to_parquet(file_path, engine="pyarrow")
 
 
 async def download_daily_dataset():
@@ -59,7 +44,7 @@ async def download_daily_dataset():
     # Read the symbols from the file (limit to 1000 for now)
     symbols = pd.read_csv(screener_fp)["Ticker"].tolist()[:1000]
 
-    # Create a semaphore to limit concurrent tasks to 25
+    # Create a semaphore to limit concurrent tasks to 40
     semaphore = asyncio.Semaphore(40)
 
     async def bounded_download_equity_data(symbol: str):
