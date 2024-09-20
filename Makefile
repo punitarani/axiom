@@ -1,7 +1,7 @@
 # Makefile
 
 # List of directories and files to format and lint
-TARGETS = axiom/ notebooks/ server/ tests/
+TARGETS = axiom/ notebooks/ scripts/ server/ tests/
 
 # Format code using isort and black
 format:
