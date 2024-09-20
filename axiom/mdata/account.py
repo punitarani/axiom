@@ -37,7 +37,7 @@ async def get_account_info() -> Account:
     sch = get_schwab_client()
 
     async with sch_limiter:
-        response = await sch.get_accounts()
+        response = await sch.get_accounts(fields=sch.Account.Fields.POSITIONS)
         account_info = response.json()[ACCOUNT_IDX]
         account_data = Account.model_validate(account_info)
 
