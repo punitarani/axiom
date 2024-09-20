@@ -916,6 +916,9 @@ class CommissionLeg(BaseModel):
 class FeeLeg(BaseModel):
     feeValues: Optional[List[FeeValue]] = None
 
+class AccountCollectiveInvestment(AccountsBaseInstrument):
+    type: Optional[Type2] = None
+    assetType: Literal['COLLECTIVE_INVESTMENT']
 
 class AccountsInstrument(
     RootModel[
@@ -925,11 +928,17 @@ class AccountsInstrument(
             AccountFixedIncome,
             AccountMutualFund,
             AccountOption,
+            AccountCollectiveInvestment,
         ]
     ]
 ):
     root: Union[
-        AccountCashEquivalent, AccountEquity, AccountFixedIncome, AccountMutualFund, AccountOption
+        AccountCashEquivalent,
+        AccountEquity,
+        AccountFixedIncome,
+        AccountMutualFund,
+        AccountOption,
+        AccountCollectiveInvestment,
     ] = Field(..., discriminator='assetType')
 
 
