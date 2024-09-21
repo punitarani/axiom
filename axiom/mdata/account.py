@@ -2,7 +2,7 @@
 
 from axiom.schwab_client import get_schwab_client, sch_limiter
 from axiom.schwab_models_account import Account, AccountNumberHash, Transaction
-from axiom.store.cache import account_info_cache
+from axiom.store.cache import account_info_cache, transactions_cache
 
 # Hardcode the account idx to only support one account for now
 ACCOUNT_IDX = 0
@@ -49,6 +49,11 @@ async def get_account_info() -> Account:
 
 async def get_account_transactions() -> list[Transaction]:
     """Get the transactions for a given account."""
+    # Check the cache first
+    cached_transactions = transactions_cache.get(ACCOUNT_IDX)
+    if cached_transactions is not None:
+        return cached_transactions
+
     sch = get_schwab_client()
 
     async with sch_limiter:
@@ -57,4 +62,8 @@ async def get_account_transactions() -> list[Transaction]:
 
         # Parse the Transaction objects
         transactions = [Transaction.model_validate(transaction) for transaction in response.json()]
+
+        # Cache the transactions for 1 hour (3600 seconds)
+        transactions_cache.set(ACCOUNT_IDX, transactions, expire=3600)
+
         return transactions

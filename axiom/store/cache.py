@@ -12,3 +12,4 @@ instrument_cache = diskcache.Cache(directory=CACHE_DIR.joinpath("instrument"))
 
 # Account caches
 account_info_cache = diskcache.Cache(directory=CACHE_DIR.joinpath("account_info"))
+transactions_cache = diskcache.Cache(directory=CACHE_DIR.joinpath("transactions"))
