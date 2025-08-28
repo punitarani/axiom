@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from axiom.config import supabase
+from axiom.config import OWNER_ID, supabase
 
 load_dotenv()
 
@@ -47,8 +47,27 @@ async def get_current_active_user(current_user=Depends(get_current_user)):
     return current_user
 
 
+async def get_owner_user(current_user=Depends(get_current_active_user)):
+    """
+    Ensure the current user is the owner (for Schwab access)
+    """
+    if current_user.id != OWNER_ID:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied. Owner privileges required.",
+        )
+    return current_user
+
+
 def require_auth():
     """
     Dependency that requires authentication
     """
     return Depends(get_current_active_user)
+
+
+def require_owner():
+    """
+    Dependency that requires owner authentication
+    """
+    return Depends(get_owner_user)

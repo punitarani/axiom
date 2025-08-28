@@ -20,7 +20,7 @@ from axiom.database import Base  # noqa: E402
 config = context.config
 
 # Set the database URL from environment variable
-config.set_main_option("sqlalchemy.url", os.getenv("SUPABASE_DB_URL"))
+config.set_main_option("sqlalchemy.url", os.getenv("DB_URL"))
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

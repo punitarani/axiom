@@ -6,11 +6,9 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 load_dotenv()
 
-SUPABASE_DB_URL = os.getenv(
-    "SUPABASE_DB_URL", "postgresql+asyncpg://user:pass@localhost/axiom"
-)
+DB_URL = os.getenv("DB_URL", "postgresql+asyncpg://user:pass@localhost/axiom")
 
-engine = create_async_engine(SUPABASE_DB_URL, echo=True)
+engine = create_async_engine(DB_URL, echo=True)
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 Base = declarative_base()

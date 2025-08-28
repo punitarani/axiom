@@ -10,6 +10,13 @@ import type {
   ProtectedRouteProtectedGetResponses,
   GetUserProfileUserProfileGetData,
   GetUserProfileUserProfileGetResponses,
+  ConnectSchwabConnectSchwabPostData,
+  ConnectSchwabConnectSchwabPostResponses,
+  SchwabOauthCallbackApiSchwabCallbackGetData,
+  SchwabOauthCallbackApiSchwabCallbackGetResponses,
+  SchwabOauthCallbackApiSchwabCallbackGetErrors,
+  DisconnectSchwabDisconnectSchwabDeleteData,
+  DisconnectSchwabDisconnectSchwabDeleteResponses,
   GetOpenapiOpenapiJsonGetData,
   GetOpenapiOpenapiJsonGetResponses,
 } from "./types.gen";
@@ -110,6 +117,81 @@ export const getUserProfileUserProfileGet = <
       },
     ],
     url: "/user/profile",
+    ...options,
+  });
+};
+
+/**
+ * Connect Schwab
+ * Connect Schwab account - validates owner internally and returns auth URL
+ */
+export const connectSchwabConnectSchwabPost = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<ConnectSchwabConnectSchwabPostData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).post<
+    ConnectSchwabConnectSchwabPostResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/connect/schwab",
+    ...options,
+  });
+};
+
+/**
+ * Schwab Oauth Callback
+ * Handle Schwab OAuth callback (owner only)
+ */
+export const schwabOauthCallbackApiSchwabCallbackGet = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<SchwabOauthCallbackApiSchwabCallbackGetData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    SchwabOauthCallbackApiSchwabCallbackGetResponses,
+    SchwabOauthCallbackApiSchwabCallbackGetErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/api/schwab/callback",
+    ...options,
+  });
+};
+
+/**
+ * Disconnect Schwab
+ * Disconnect Schwab account - validates owner internally
+ */
+export const disconnectSchwabDisconnectSchwabDelete = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<DisconnectSchwabDisconnectSchwabDeleteData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).delete<
+    DisconnectSchwabDisconnectSchwabDeleteResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
+    url: "/disconnect/schwab",
     ...options,
   });
 };
