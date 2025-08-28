@@ -1,7 +1,8 @@
-from config import supabase
 from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
+from axiom.config import supabase
 
 load_dotenv()
 

@@ -6,7 +6,8 @@
 		"dev": "turbo run dev",
 		"lint": "turbo run lint",
 		"format": "turbo run format",
-		"typecheck": "turbo run typecheck"
+		"typecheck": "turbo run typecheck",
+		"api": "turbo run api"
 	},
 	"devDependencies": {
 		"prettier": "^3.6.2",

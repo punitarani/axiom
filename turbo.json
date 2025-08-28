@@ -1,28 +1,32 @@
 {
-	"$schema": "https://turborepo.com/schema.json",
-	"ui": "tui",
-	"tasks": {
-		"build": {
-			"dependsOn": ["^build"],
-			"inputs": ["$TURBO_DEFAULT$", ".env*"],
-			"outputs": [".next/**", "!.next/cache/**"]
-		},
-		"format": {
-			"dependsOn": ["^format"],
-			"outputs": []
-		},
-		"lint": {
-			"dependsOn": ["^format", "^lint"]
-		},
-		"typecheck": {
-			"dependsOn": ["^typecheck"]
-		},
-		"dev": {
-			"cache": false,
-			"persistent": true
-		},
-		"start": {
-			"dependsOn": ["^start"]
-		}
-	}
+  "$schema": "https://turborepo.com/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": ["api", "^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "format": {
+      "dependsOn": ["^format"],
+      "outputs": []
+    },
+    "lint": {
+      "dependsOn": ["^format", "^lint"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "start": {
+      "dependsOn": ["^start"]
+    },
+    "api": {
+      "cache": false,
+      "outputs": ["src/lib/api/**"]
+    }
+  }
 }

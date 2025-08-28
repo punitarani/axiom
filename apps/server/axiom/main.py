@@ -1,9 +1,10 @@
 import uvicorn
-from auth import require_auth
-from database import get_db
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from axiom.auth import require_auth
+from axiom.database import get_db
 
 app = FastAPI(title="Axiom Server", version="0.1.0")
 
@@ -51,6 +52,14 @@ async def get_user_profile(
         "created_at": current_user.created_at,
         "email_confirmed_at": current_user.email_confirmed_at,
     }
+
+
+@app.get("/openapi.json")
+async def get_openapi():
+    """
+    Export OpenAPI schema for code generation
+    """
+    return app.openapi()
 
 
 def main():

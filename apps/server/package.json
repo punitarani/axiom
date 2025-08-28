@@ -1,9 +1,10 @@
 {
-	"name": "axiom-server",
-	"private": true,
-	"scripts": {
-		"dev": "uv run python axiom/main.py",
-		"lint": "uv run ruff check --fix .",
-		"format": "uv run ruff format ."
-	}
+  "name": "server",
+  "private": true,
+  "scripts": {
+    "dev": "uv run python axiom/main.py",
+    "lint": "uv run ruff check --fix .",
+    "format": "uv run ruff format .",
+    "api": "uv run python -m scripts.openapi"
+  }
 }

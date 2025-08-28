@@ -23,6 +23,15 @@
   },
   "linter": {
     "enabled": true,
+    "includes": [
+      "**",
+      "!node_modules",
+      "!.next",
+      "!dist",
+      "!build",
+      "!src/components/ui",
+      "!src/lib/api"
+    ],
     "rules": {
       "recommended": true,
       "suspicious": {
