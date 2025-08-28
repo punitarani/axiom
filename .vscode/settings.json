@@ -15,6 +15,7 @@
 		"**/dist": true,
 		"**/.turbo": true
 	},
+	"python.defaultInterpreterPath": "./apps/server/.venv/bin/python",
 	"[python]": {
 		"editor.tabSize": 4
 	}

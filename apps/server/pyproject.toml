@@ -5,7 +5,12 @@ description = "Axiom Server"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "alembic>=1.16.5",
+    "asyncpg>=0.30.0",
     "fastapi[standard]>=0.116.1",
+    "schwab-py>=1.5.1",
+    "sqlalchemy[asyncio]>=2.0.43",
+    "supabase>=2.18.1",
     "websockets>=15.0.1",
 ]
 
