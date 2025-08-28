@@ -1,14 +1,13 @@
-import { login, signup } from "./actions";
+"use client";
+
+import { LoginForm } from "@/components/auth/LoginForm";
 
 export default function LoginPage() {
   return (
-    <form>
-      <label htmlFor="email">Email:</label>
-      <input id="email" name="email" type="email" required />
-      <label htmlFor="password">Password:</label>
-      <input id="password" name="password" type="password" required />
-      <button formAction={login}>Log in</button>
-      <button formAction={signup}>Sign up</button>
-    </form>
+    <div className="container mx-auto py-12 px-4 flex items-center justify-center min-h-screen">
+      <div className="w-full max-w-md">
+        <LoginForm />
+      </div>
+    </div>
   );
 }

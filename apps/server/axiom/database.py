@@ -1,14 +1,9 @@
-import os
-
-from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-load_dotenv()
+from axiom.env import env
 
-DB_URL = os.getenv("DB_URL", "postgresql+asyncpg://user:pass@localhost/axiom")
-
-engine = create_async_engine(DB_URL, echo=True)
+engine = create_async_engine(env.DB_URL, echo=env.DEBUG)
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 Base = declarative_base()

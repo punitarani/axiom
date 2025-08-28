@@ -6,19 +6,15 @@ from urllib.parse import urlencode
 import httpx
 from fastapi import HTTPException
 
-from axiom.config import (
-    SCHWAB_API_KEY,
-    SCHWAB_APP_SECRET,
-    SCHWAB_CALLBACK_URL,
-    supabase,
-)
+from axiom.config import supabase
+from axiom.env import env
 
 
 class SchwabAuthService:
     def __init__(self):
-        self.api_key = SCHWAB_API_KEY
-        self.app_secret = SCHWAB_APP_SECRET
-        self.callback_url = SCHWAB_CALLBACK_URL
+        self.api_key = env.SCHWAB_API_KEY
+        self.app_secret = env.SCHWAB_APP_SECRET
+        self.callback_url = env.SCHWAB_CALLBACK_URL
         self.auth_url = "https://api.schwabapi.com/v1/oauth/authorize"
         self.token_url = "https://api.schwabapi.com/v1/oauth/token"
 
@@ -27,10 +23,10 @@ class SchwabAuthService:
         Generate OAuth authorization URL and state parameter
         """
         state = secrets.token_urlsafe(32)
-        
+
         # Store state temporarily for validation
         self._store_oauth_state(user_id, state)
-        
+
         params = {
             "client_id": self.api_key,
             "redirect_uri": self.callback_url,
@@ -38,11 +34,13 @@ class SchwabAuthService:
             "scope": "readonly",
             "state": state,
         }
-        
+
         auth_url = f"{self.auth_url}?{urlencode(params)}"
         return auth_url, state
 
-    async def exchange_code_for_tokens(self, code: str, state: str, user_id: str) -> dict:
+    async def exchange_code_for_tokens(
+        self, code: str, state: str, user_id: str
+    ) -> dict:
         """
         Exchange authorization code for access and refresh tokens
         """
@@ -66,8 +64,8 @@ class SchwabAuthService:
 
         if response.status_code != 200:
             raise HTTPException(
-                status_code=400, 
-                detail=f"Failed to exchange code for tokens: {response.text}"
+                status_code=400,
+                detail=f"Failed to exchange code for tokens: {response.text}",
             )
 
         return response.json()
@@ -91,8 +89,7 @@ class SchwabAuthService:
 
         if response.status_code != 200:
             raise HTTPException(
-                status_code=400, 
-                detail=f"Failed to refresh token: {response.text}"
+                status_code=400, detail=f"Failed to refresh token: {response.text}"
             )
 
         return response.json()
@@ -104,7 +101,7 @@ class SchwabAuthService:
         try:
             # Store in Supabase Vault with user-specific key
             vault_key = f"schwab_tokens_{user_id}"
-            
+
             # Store tokens as encrypted JSON
             token_data = {
                 "access_token": tokens.get("access_token"),
@@ -113,17 +110,15 @@ class SchwabAuthService:
                 "token_type": tokens.get("token_type", "Bearer"),
                 "scope": tokens.get("scope"),
             }
-            
+
             # Use Supabase Vault for secure storage
-            supabase.postgrest.table("vault").upsert({
-                "id": vault_key,
-                "secret": json.dumps(token_data)
-            }).execute()
-            
+            supabase.postgrest.table("vault").upsert(
+                {"id": vault_key, "secret": json.dumps(token_data)}
+            ).execute()
+
         except Exception as e:
             raise HTTPException(
-                status_code=500,
-                detail=f"Failed to store tokens: {str(e)}"
+                status_code=500, detail=f"Failed to store tokens: {str(e)}"
             )
 
     async def get_tokens_from_vault(self, user_id: str) -> Optional[dict]:
@@ -132,14 +127,19 @@ class SchwabAuthService:
         """
         try:
             vault_key = f"schwab_tokens_{user_id}"
-            
-            result = supabase.postgrest.table("vault").select("secret").eq("id", vault_key).execute()
-            
+
+            result = (
+                supabase.postgrest.table("vault")
+                .select("secret")
+                .eq("id", vault_key)
+                .execute()
+            )
+
             if not result.data:
                 return None
-                
+
             return json.loads(result.data[0]["secret"])
-            
+
         except Exception:
             return None
 
@@ -148,6 +148,7 @@ class SchwabAuthService:
         Generate basic auth header for token requests
         """
         import base64
+
         credentials = f"{self.api_key}:{self.app_secret}"
         encoded = base64.b64encode(credentials.encode()).decode()
         return encoded
@@ -158,11 +159,9 @@ class SchwabAuthService:
         """
         try:
             # Store state with 10 minute expiry
-            supabase.postgrest.table("oauth_states").upsert({
-                "user_id": user_id,
-                "state": state,
-                "created_at": "now()"
-            }).execute()
+            supabase.postgrest.table("oauth_states").upsert(
+                {"user_id": user_id, "state": state, "created_at": "now()"}
+            ).execute()
         except Exception:
             pass  # Non-critical for demo purposes
 
@@ -171,14 +170,21 @@ class SchwabAuthService:
         Get user ID from OAuth state parameter and validate it
         """
         try:
-            result = supabase.postgrest.table("oauth_states").select("user_id").eq("state", state).execute()
-            
+            result = (
+                supabase.postgrest.table("oauth_states")
+                .select("user_id")
+                .eq("state", state)
+                .execute()
+            )
+
             if result.data:
                 user_id = result.data[0]["user_id"]
                 # Clean up used state
-                supabase.postgrest.table("oauth_states").delete().eq("state", state).execute()
+                supabase.postgrest.table("oauth_states").delete().eq(
+                    "state", state
+                ).execute()
                 return user_id
-                
+
             return None
         except Exception:
             return None
@@ -188,13 +194,21 @@ class SchwabAuthService:
         Validate OAuth state parameter
         """
         try:
-            result = supabase.postgrest.table("oauth_states").select("state").eq("user_id", user_id).eq("state", state).execute()
-            
+            result = (
+                supabase.postgrest.table("oauth_states")
+                .select("state")
+                .eq("user_id", user_id)
+                .eq("state", state)
+                .execute()
+            )
+
             if result.data:
                 # Clean up used state
-                supabase.postgrest.table("oauth_states").delete().eq("user_id", user_id).eq("state", state).execute()
+                supabase.postgrest.table("oauth_states").delete().eq(
+                    "user_id", user_id
+                ).eq("state", state).execute()
                 return True
-                
+
             return False
         except Exception:
             return False

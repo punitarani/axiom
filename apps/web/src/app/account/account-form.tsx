@@ -1,135 +1,108 @@
 "use client";
-import type { User } from "@supabase/supabase-js";
-import { useCallback, useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
 
-// ...
+import type { User } from "@supabase/supabase-js";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function AccountForm({ user }: { user: User | null }) {
-  const supabase = createClient();
-  const [loading, setLoading] = useState(true);
-  const [fullname, setFullname] = useState<string | null>(null);
-  const [username, setUsername] = useState<string | null>(null);
-  const [website, setWebsite] = useState<string | null>(null);
-  const [avatar_url, setAvatarUrl] = useState<string | null>(null);
+  const { signOut } = useAuth();
+  const router = useRouter();
+  const [signingOut, setSigningOut] = useState(false);
 
-  const getProfile = useCallback(async () => {
+  const handleSignOut = async () => {
     try {
-      setLoading(true);
-
-      const { data, error, status } = await supabase
-        .from("profiles")
-        .select(`full_name, username, website, avatar_url`)
-        .eq("id", user?.id)
-        .single();
-
-      if (error && status !== 406) {
-        console.log(error);
-        throw error;
-      }
-
-      if (data) {
-        setFullname(data.full_name);
-        setUsername(data.username);
-        setWebsite(data.website);
-        setAvatarUrl(data.avatar_url);
-      }
-    } catch (_error) {
-      alert("Error loading user data!");
+      setSigningOut(true);
+      await signOut();
+      router.push("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
     } finally {
-      setLoading(false);
+      setSigningOut(false);
     }
-  }, [user, supabase]);
+  };
 
-  useEffect(() => {
-    getProfile();
-  }, [getProfile]);
-
-  async function updateProfile({
-    username,
-    website,
-    avatar_url,
-  }: {
-    username: string | null;
-    fullname: string | null;
-    website: string | null;
-    avatar_url: string | null;
-  }) {
-    try {
-      setLoading(true);
-
-      const { error } = await supabase.from("profiles").upsert({
-        id: user?.id as string,
-        full_name: fullname,
-        username,
-        website,
-        avatar_url,
-        updated_at: new Date().toISOString(),
-      });
-      if (error) throw error;
-      alert("Profile updated!");
-    } catch (_error) {
-      alert("Error updating the data!");
-    } finally {
-      setLoading(false);
-    }
+  if (!user) {
+    return (
+      <div className="container mx-auto py-12 px-4 max-w-2xl">
+        <Card>
+          <CardHeader>
+            <CardTitle>Access Denied</CardTitle>
+            <CardDescription>
+              Please sign in to view your account.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
   }
 
   return (
-    <div className="form-widget">
-      {/* ... */}
+    <div className="container mx-auto py-12 px-4 max-w-2xl">
+      <Card>
+        <CardHeader>
+          <CardTitle>Account Information</CardTitle>
+          <CardDescription>Your account details</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex items-center space-x-4">
+            <Avatar className="h-16 w-16">
+              <AvatarFallback className="text-lg">
+                {user.email?.[0]?.toUpperCase() || "U"}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <h3 className="text-lg font-medium">{user.email}</h3>
+              <p className="text-sm text-muted-foreground">
+                Member since {new Date(user.created_at).toLocaleDateString()}
+              </p>
+            </div>
+          </div>
 
-      <div>
-        <label htmlFor="email">Email</label>
-        <input id="email" type="text" value={user?.email} disabled />
-      </div>
-      <div>
-        <label htmlFor="fullName">Full Name</label>
-        <input
-          id="fullName"
-          type="text"
-          value={fullname || ""}
-          onChange={(e) => setFullname(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="username">Username</label>
-        <input
-          id="username"
-          type="text"
-          value={username || ""}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="website">Website</label>
-        <input
-          id="website"
-          type="url"
-          value={website || ""}
-          onChange={(e) => setWebsite(e.target.value)}
-        />
-      </div>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={user.email || ""}
+                disabled
+              />
+            </div>
 
-      <div>
-        <button
-          className="button primary block"
-          onClick={() =>
-            updateProfile({ fullname, username, website, avatar_url })
-          }
-          disabled={loading}
-        >
-          {loading ? "Loading ..." : "Update"}
-        </button>
-      </div>
+            <div className="space-y-2">
+              <Label htmlFor="userId">User ID</Label>
+              <Input id="userId" type="text" value={user.id} disabled />
+              <p className="text-xs text-muted-foreground">
+                This is your unique identifier
+              </p>
+            </div>
+          </div>
 
-      <div>
-        <form action="/auth/signout" method="post">
-          <button className="button block" type="submit">
-            Sign out
-          </button>
-        </form>
-      </div>
+          <Separator />
+
+          <Button
+            onClick={handleSignOut}
+            variant="destructive"
+            className="w-full"
+            disabled={signingOut}
+          >
+            {signingOut ? "Signing out..." : "Sign Out"}
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }

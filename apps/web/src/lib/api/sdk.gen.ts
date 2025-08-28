@@ -2,6 +2,9 @@
 
 import type { Options as ClientOptions, TDataShape, Client } from "./client";
 import type {
+  SchwabOauthCallbackApiAuthSchwabCallbackGetData,
+  SchwabOauthCallbackApiAuthSchwabCallbackGetResponses,
+  SchwabOauthCallbackApiAuthSchwabCallbackGetErrors,
   RootGetData,
   RootGetResponses,
   HealthCheckHealthGetData,
@@ -10,13 +13,16 @@ import type {
   ProtectedRouteProtectedGetResponses,
   GetUserProfileUserProfileGetData,
   GetUserProfileUserProfileGetResponses,
+  GetCurrentUserInfoUserMeGetData,
+  GetCurrentUserInfoUserMeGetResponses,
+  GetConnectionStatusConnectionsStatusGetData,
+  GetConnectionStatusConnectionsStatusGetResponses,
   ConnectSchwabConnectSchwabPostData,
   ConnectSchwabConnectSchwabPostResponses,
-  SchwabOauthCallbackApiSchwabCallbackGetData,
-  SchwabOauthCallbackApiSchwabCallbackGetResponses,
-  SchwabOauthCallbackApiSchwabCallbackGetErrors,
   DisconnectSchwabDisconnectSchwabDeleteData,
   DisconnectSchwabDisconnectSchwabDeleteResponses,
+  ResetSchwabConnectionResetSchwabPostData,
+  ResetSchwabConnectionResetSchwabPostResponses,
   GetOpenapiOpenapiJsonGetData,
   GetOpenapiOpenapiJsonGetResponses,
 } from "./types.gen";
@@ -37,6 +43,28 @@ export type Options<
    * used to access values that aren't defined as part of the SDK function.
    */
   meta?: Record<string, unknown>;
+};
+
+/**
+ * Schwab Oauth Callback
+ * Handle Schwab OAuth callback - validates state to identify user
+ */
+export const schwabOauthCallbackApiAuthSchwabCallbackGet = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    SchwabOauthCallbackApiAuthSchwabCallbackGetData,
+    ThrowOnError
+  >,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    SchwabOauthCallbackApiAuthSchwabCallbackGetResponses,
+    SchwabOauthCallbackApiAuthSchwabCallbackGetErrors,
+    ThrowOnError
+  >({
+    url: "/api/auth/schwab/callback",
+    ...options,
+  });
 };
 
 /**
@@ -122,6 +150,44 @@ export const getUserProfileUserProfileGet = <
 };
 
 /**
+ * Get Current User Info
+ * Get current user info using cookie auth (for testing)
+ */
+export const getCurrentUserInfoUserMeGet = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetCurrentUserInfoUserMeGetData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    GetCurrentUserInfoUserMeGetResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: "/user/me",
+    ...options,
+  });
+};
+
+/**
+ * Get Connection Status
+ * Get status of all supported connections
+ */
+export const getConnectionStatusConnectionsStatusGet = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetConnectionStatusConnectionsStatusGetData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    GetConnectionStatusConnectionsStatusGetResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: "/connections/status",
+    ...options,
+  });
+};
+
+/**
  * Connect Schwab
  * Connect Schwab account - validates owner internally and returns auth URL
  */
@@ -135,38 +201,7 @@ export const connectSchwabConnectSchwabPost = <
     unknown,
     ThrowOnError
   >({
-    security: [
-      {
-        scheme: "bearer",
-        type: "http",
-      },
-    ],
     url: "/connect/schwab",
-    ...options,
-  });
-};
-
-/**
- * Schwab Oauth Callback
- * Handle Schwab OAuth callback (owner only)
- */
-export const schwabOauthCallbackApiSchwabCallbackGet = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<SchwabOauthCallbackApiSchwabCallbackGetData, ThrowOnError>,
-) => {
-  return (options.client ?? _heyApiClient).get<
-    SchwabOauthCallbackApiSchwabCallbackGetResponses,
-    SchwabOauthCallbackApiSchwabCallbackGetErrors,
-    ThrowOnError
-  >({
-    security: [
-      {
-        scheme: "bearer",
-        type: "http",
-      },
-    ],
-    url: "/api/schwab/callback",
     ...options,
   });
 };
@@ -185,13 +220,26 @@ export const disconnectSchwabDisconnectSchwabDelete = <
     unknown,
     ThrowOnError
   >({
-    security: [
-      {
-        scheme: "bearer",
-        type: "http",
-      },
-    ],
     url: "/disconnect/schwab",
+    ...options,
+  });
+};
+
+/**
+ * Reset Schwab Connection
+ * Reset Schwab connection - clears all auth data including tokens and OAuth states
+ */
+export const resetSchwabConnectionResetSchwabPost = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<ResetSchwabConnectionResetSchwabPostData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).post<
+    ResetSchwabConnectionResetSchwabPostResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: "/reset/schwab",
     ...options,
   });
 };

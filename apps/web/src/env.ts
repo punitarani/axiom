@@ -24,6 +24,7 @@ export const env = createEnv({
       .string()
       .min(1, "Supabase publishable key is required"),
     NEXT_PUBLIC_API_URL: z.string().url().default("http://localhost:8000"),
+    NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
   },
 
   /**
@@ -35,6 +36,7 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   },

@@ -5,6 +5,56 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/api/auth/schwab/callback": {
+      "get": {
+        "tags": [
+          "schwab-auth"
+        ],
+        "summary": "Schwab Oauth Callback",
+        "description": "Handle Schwab OAuth callback - validates state to identify user",
+        "operationId": "schwab_oauth_callback_api_auth_schwab_callback_get",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Code"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "State"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "summary": "Root",
@@ -81,6 +131,40 @@
         ]
       }
     },
+    "/user/me": {
+      "get": {
+        "summary": "Get Current User Info",
+        "description": "Get current user info using cookie auth (for testing)",
+        "operationId": "get_current_user_info_user_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/connections/status": {
+      "get": {
+        "summary": "Get Connection Status",
+        "description": "Get status of all supported connections",
+        "operationId": "get_connection_status_connections_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/connect/schwab": {
       "post": {
         "summary": "Connect Schwab",
@@ -92,63 +176,6 @@
             "content": {
               "application/json": {
                 "schema": {}
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "HTTPBearer": []
-          }
-        ]
-      }
-    },
-    "/api/schwab/callback": {
-      "get": {
-        "summary": "Schwab Oauth Callback",
-        "description": "Handle Schwab OAuth callback (owner only)",
-        "operationId": "schwab_oauth_callback_api_schwab_callback_get",
-        "security": [
-          {
-            "HTTPBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "code",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Code"
-            }
-          },
-          {
-            "name": "state",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "State"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
               }
             }
           }
@@ -169,12 +196,24 @@
               }
             }
           }
-        },
-        "security": [
-          {
-            "HTTPBearer": []
+        }
+      }
+    },
+    "/reset/schwab": {
+      "post": {
+        "summary": "Reset Schwab Connection",
+        "description": "Reset Schwab connection - clears all auth data including tokens and OAuth states",
+        "operationId": "reset_schwab_connection_reset_schwab_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
           }
-        ]
+        }
       }
     },
     "/openapi.json": {

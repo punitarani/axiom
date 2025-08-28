@@ -28,6 +28,39 @@ export type ValidationError = {
   type: string;
 };
 
+export type SchwabOauthCallbackApiAuthSchwabCallbackGetData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Code
+     */
+    code: string;
+    /**
+     * State
+     */
+    state: string;
+  };
+  url: "/api/auth/schwab/callback";
+};
+
+export type SchwabOauthCallbackApiAuthSchwabCallbackGetErrors = {
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
+};
+
+export type SchwabOauthCallbackApiAuthSchwabCallbackGetError =
+  SchwabOauthCallbackApiAuthSchwabCallbackGetErrors[keyof SchwabOauthCallbackApiAuthSchwabCallbackGetErrors];
+
+export type SchwabOauthCallbackApiAuthSchwabCallbackGetResponses = {
+  /**
+   * Successful Response
+   */
+  200: unknown;
+};
+
 export type RootGetData = {
   body?: never;
   path?: never;
@@ -84,6 +117,34 @@ export type GetUserProfileUserProfileGetResponses = {
   200: unknown;
 };
 
+export type GetCurrentUserInfoUserMeGetData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/user/me";
+};
+
+export type GetCurrentUserInfoUserMeGetResponses = {
+  /**
+   * Successful Response
+   */
+  200: unknown;
+};
+
+export type GetConnectionStatusConnectionsStatusGetData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/connections/status";
+};
+
+export type GetConnectionStatusConnectionsStatusGetResponses = {
+  /**
+   * Successful Response
+   */
+  200: unknown;
+};
+
 export type ConnectSchwabConnectSchwabPostData = {
   body?: never;
   path?: never;
@@ -98,39 +159,6 @@ export type ConnectSchwabConnectSchwabPostResponses = {
   200: unknown;
 };
 
-export type SchwabOauthCallbackApiSchwabCallbackGetData = {
-  body?: never;
-  path?: never;
-  query: {
-    /**
-     * Code
-     */
-    code: string;
-    /**
-     * State
-     */
-    state: string;
-  };
-  url: "/api/schwab/callback";
-};
-
-export type SchwabOauthCallbackApiSchwabCallbackGetErrors = {
-  /**
-   * Validation Error
-   */
-  422: HttpValidationError;
-};
-
-export type SchwabOauthCallbackApiSchwabCallbackGetError =
-  SchwabOauthCallbackApiSchwabCallbackGetErrors[keyof SchwabOauthCallbackApiSchwabCallbackGetErrors];
-
-export type SchwabOauthCallbackApiSchwabCallbackGetResponses = {
-  /**
-   * Successful Response
-   */
-  200: unknown;
-};
-
 export type DisconnectSchwabDisconnectSchwabDeleteData = {
   body?: never;
   path?: never;
@@ -139,6 +167,20 @@ export type DisconnectSchwabDisconnectSchwabDeleteData = {
 };
 
 export type DisconnectSchwabDisconnectSchwabDeleteResponses = {
+  /**
+   * Successful Response
+   */
+  200: unknown;
+};
+
+export type ResetSchwabConnectionResetSchwabPostData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/reset/schwab";
+};
+
+export type ResetSchwabConnectionResetSchwabPostResponses = {
   /**
    * Successful Response
    */

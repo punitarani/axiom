@@ -2,25 +2,22 @@ import os
 import sys
 from logging.config import fileConfig
 
-from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-
-# Load environment variables
-load_dotenv()
 
 # Add parent directory to path to import database module
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from axiom.database import Base  # noqa: E402
+from axiom.env import env  # noqa: E402
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
 # Set the database URL from environment variable
-config.set_main_option("sqlalchemy.url", os.getenv("DB_URL"))
+config.set_main_option("sqlalchemy.url", env.DB_URL)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

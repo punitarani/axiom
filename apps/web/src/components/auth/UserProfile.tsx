@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +15,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export function UserProfile() {
   const { user, signOut, loading } = useAuth();
+  const router = useRouter();
+  const [signingOut, setSigningOut] = useState(false);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -23,7 +27,15 @@ export function UserProfile() {
   }
 
   const handleSignOut = async () => {
-    await signOut();
+    try {
+      setSigningOut(true);
+      await signOut();
+      router.push("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    } finally {
+      setSigningOut(false);
+    }
   };
 
   return (
@@ -46,8 +58,13 @@ export function UserProfile() {
             </p>
           </div>
         </div>
-        <Button onClick={handleSignOut} variant="outline" className="w-full">
-          Sign Out
+        <Button
+          onClick={handleSignOut}
+          variant="outline"
+          className="w-full"
+          disabled={signingOut}
+        >
+          {signingOut ? "Signing out..." : "Sign Out"}
         </Button>
       </CardContent>
     </Card>

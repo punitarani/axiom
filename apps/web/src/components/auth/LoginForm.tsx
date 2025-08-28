@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { signIn } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,9 +32,11 @@ export function LoginForm() {
 
     if (error) {
       setError(error.message);
+      setIsLoading(false);
+    } else {
+      // Successful sign in - redirect to profile page
+      router.push("/profile");
     }
-
-    setIsLoading(false);
   };
 
   return (

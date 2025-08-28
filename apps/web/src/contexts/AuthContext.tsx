@@ -8,10 +8,6 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (
-    email: string,
-    password: string,
-  ) => Promise<{ error: AuthError | null }>;
   signIn: (
     email: string,
     password: string,
@@ -52,14 +48,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, [supabase.auth.getSession, supabase.auth.onAuthStateChange]);
 
-  const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    return { error };
-  };
-
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -77,7 +65,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     session,
     loading,
-    signUp,
     signIn,
     signOut,
   };
