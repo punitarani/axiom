@@ -27,6 +27,22 @@
     "api": {
       "cache": false,
       "outputs": ["src/lib/api/**"]
+    },
+    "db:generate": {
+      "cache": false,
+      "outputs": []
+    },
+    "db:migrate": {
+      "cache": false,
+      "outputs": []
+    },
+    "db:downgrade": {
+      "cache": false,
+      "outputs": []
+    },
+    "db:status": {
+      "cache": false,
+      "outputs": []
     }
   }
 }

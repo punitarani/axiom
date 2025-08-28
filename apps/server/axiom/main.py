@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from axiom.api.auth.schwab import router as schwab_auth_router
 from axiom.auth import require_auth, require_auth_cookies
 from axiom.config import supabase
-from axiom.database import get_db
+from axiom.db.client import get_db
 from axiom.env import env
 from axiom.schwab import schwab_auth_service
 

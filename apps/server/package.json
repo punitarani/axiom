@@ -5,6 +5,10 @@
     "dev": "uv run python axiom/main.py",
     "lint": "uv run ruff check --fix .",
     "format": "uv run ruff format .",
-    "api": "uv run python -m scripts.openapi"
+    "api": "uv run python -m scripts.openapi",
+    "db:generate": "uv run alembic revision --autogenerate -m",
+    "db:migrate": "uv run alembic upgrade head",
+    "db:downgrade": "uv run alembic downgrade -1",
+    "db:status": "uv run alembic history --verbose"
   }
 }
