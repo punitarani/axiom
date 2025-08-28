@@ -1,0 +1,28 @@
+[project]
+name = "axiom"
+version = "0.1.0"
+description = "Axiom Server"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[standard]>=0.116.1",
+    "websockets>=15.0.1",
+]
+
+[dependency-groups]
+dev = [
+    "python-dotenv>=1.1.0",
+    "ruff>=0.12.10",
+]
+
+[tool.setuptools.packages.find]
+include = ["axiom"]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+extend-select = ["I"]
+
+[tool.uv]
+package = true

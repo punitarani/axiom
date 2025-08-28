@@ -1,0 +1,9 @@
+{
+	"name": "axiom-server",
+	"private": true,
+	"scripts": {
+		"dev": "poetry run python main.py",
+		"lint": "poetry run ruff check --fix .",
+		"format": "poetry run ruff format ."
+	}
+}

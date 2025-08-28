@@ -1,0 +1,21 @@
+{
+	"editor.defaultFormatter": "biomejs.biome",
+	"editor.formatOnSave": true,
+	"editor.tabSize": 2,
+	"editor.wordWrap": "on",
+	"editor.codeActionsOnSave": {
+		"source.organizeImports": "never",
+		"source.fixAll": "explicit"
+	},
+	"files.insertFinalNewline": true,
+	"files.trimFinalNewlines": true,
+	"files.trimTrailingWhitespace": true,
+	"files.exclude": {
+		"**/node_modules": true,
+		"**/dist": true,
+		"**/.turbo": true
+	},
+	"[python]": {
+		"editor.tabSize": 4
+	}
+}
