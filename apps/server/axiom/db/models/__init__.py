@@ -15,6 +15,7 @@ from axiom.db.models.enums import (
 from axiom.db.models.exchange import Exchange
 from axiom.db.models.level_one import LevelOne
 from axiom.db.models.level_two import LevelTwo
+from axiom.db.models.oauth import OAuthState
 from axiom.db.models.option_contract import OptionContract
 from axiom.db.models.option_quote import OptionQuote
 from axiom.db.models.security import Security
@@ -28,6 +29,7 @@ __all__ = [
     "LevelTwo",
     "OptionContract",
     "OptionQuote",
+    "OAuthState",
     "AssetType",
     "AssetSubType",
     "ContractType",

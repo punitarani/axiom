@@ -15,6 +15,7 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 # Import all models to ensure they're registered with SQLAlchemy
 from axiom.db.client import Base
 from axiom.env import env
+import axiom.db.models
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
