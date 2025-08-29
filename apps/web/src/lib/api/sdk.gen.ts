@@ -151,7 +151,7 @@ export const getUserProfileUserProfileGet = <
 
 /**
  * Get Current User Info
- * Get current user info using cookie auth (for testing)
+ * Get current user info using header auth
  */
 export const getCurrentUserInfoUserMeGet = <
   ThrowOnError extends boolean = false,
@@ -163,6 +163,12 @@ export const getCurrentUserInfoUserMeGet = <
     unknown,
     ThrowOnError
   >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
     url: "/user/me",
     ...options,
   });
@@ -182,6 +188,12 @@ export const getConnectionStatusConnectionsStatusGet = <
     unknown,
     ThrowOnError
   >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
     url: "/connections/status",
     ...options,
   });
@@ -201,6 +213,12 @@ export const connectSchwabConnectSchwabPost = <
     unknown,
     ThrowOnError
   >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
     url: "/connect/schwab",
     ...options,
   });
@@ -220,6 +238,12 @@ export const disconnectSchwabDisconnectSchwabDelete = <
     unknown,
     ThrowOnError
   >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
     url: "/disconnect/schwab",
     ...options,
   });
@@ -239,6 +263,12 @@ export const resetSchwabConnectionResetSchwabPost = <
     unknown,
     ThrowOnError
   >({
+    security: [
+      {
+        scheme: "bearer",
+        type: "http",
+      },
+    ],
     url: "/reset/schwab",
     ...options,
   });

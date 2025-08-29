@@ -1,8 +1,12 @@
-from fastapi import APIRouter, HTTPException, Query
-from fastapi.responses import RedirectResponse
+from typing import Optional
 
+from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import RedirectResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from axiom.db.client import get_db
 from axiom.env import env
-from axiom.schwab import schwab_auth_service
+from axiom.mdata.auth import SchwabAuthService
 
 router = APIRouter(prefix="/schwab", tags=["schwab-auth"])
 
@@ -11,13 +15,17 @@ router = APIRouter(prefix="/schwab", tags=["schwab-auth"])
 async def schwab_oauth_callback(
     code: str = Query(...),
     state: str = Query(...),
+    session: Optional[str] = Query(None),
+    db: AsyncSession = Depends(get_db),
 ):
     """
     Handle Schwab OAuth callback - validates state to identify user
     """
+    schwab_auth_service = SchwabAuthService()
+
     try:
         # Get user ID from state validation
-        user_id = await schwab_auth_service.get_user_id_from_state(state)
+        user_id = await schwab_auth_service.get_user_id_from_state(state, db)
         if not user_id:
             raise HTTPException(
                 status_code=400, detail="Invalid or expired OAuth state"
@@ -38,9 +46,8 @@ async def schwab_oauth_callback(
         await schwab_auth_service.store_tokens_in_vault(user_id, tokens)
 
         # Redirect to frontend success page
-        return RedirectResponse(
-            url=f"{env.APP_URL}/oauth/callback?success=true&connection=schwab"
-        )
+        redirect_url = f"{env.APP_URL}/oauth/callback?success=true&connection=schwab"
+        return RedirectResponse(url=redirect_url)
 
     except HTTPException:
         raise

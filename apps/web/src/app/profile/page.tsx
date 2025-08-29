@@ -39,7 +39,7 @@ interface ConnectionStatus {
 }
 
 export default function Profile() {
-  const { user, signOut } = useAuth();
+  const { user, session, signOut } = useAuth();
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
   const [connections, setConnections] = useState<Record<string, Connection>>(
@@ -51,7 +51,7 @@ export default function Profile() {
   const [_fetchingStatus, setFetchingStatus] = useState(false);
 
   const fetchConnectionStatus = useCallback(async () => {
-    if (!user) return;
+    if (!user || !session?.access_token) return;
 
     try {
       setFetchingStatus(true);
@@ -59,7 +59,10 @@ export default function Profile() {
         `${env.NEXT_PUBLIC_API_URL}/connections/status`,
         {
           mode: "cors",
-          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            "Content-Type": "application/json",
+          },
         },
       );
 
@@ -72,7 +75,7 @@ export default function Profile() {
     } finally {
       setFetchingStatus(false);
     }
-  }, [user]);
+  }, [user, session?.access_token]);
 
   useEffect(() => {
     if (user?.id) {
@@ -81,6 +84,8 @@ export default function Profile() {
   }, [user?.id, fetchConnectionStatus]);
 
   const handleConnect = async () => {
+    if (!session?.access_token) return;
+
     setSchwabLoading("connect");
 
     try {
@@ -89,7 +94,10 @@ export default function Profile() {
         {
           method: "POST",
           mode: "cors",
-          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            "Content-Type": "application/json",
+          },
         },
       );
 
@@ -109,6 +117,8 @@ export default function Profile() {
   };
 
   const handleDisconnect = async () => {
+    if (!session?.access_token) return;
+
     setSchwabLoading("disconnect");
 
     try {
@@ -117,7 +127,10 @@ export default function Profile() {
         {
           method: "DELETE",
           mode: "cors",
-          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            "Content-Type": "application/json",
+          },
         },
       );
 
@@ -132,13 +145,18 @@ export default function Profile() {
   };
 
   const handleReset = async () => {
+    if (!session?.access_token) return;
+
     setSchwabLoading("reset");
 
     try {
       const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/reset/schwab`, {
         method: "POST",
         mode: "cors",
-        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          "Content-Type": "application/json",
+        },
       });
 
       if (response.ok) {

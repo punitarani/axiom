@@ -31,6 +31,22 @@
               "type": "string",
               "title": "State"
             }
+          },
+          {
+            "name": "session",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session"
+            }
           }
         ],
         "responses": {
@@ -134,7 +150,7 @@
     "/user/me": {
       "get": {
         "summary": "Get Current User Info",
-        "description": "Get current user info using cookie auth (for testing)",
+        "description": "Get current user info using header auth",
         "operationId": "get_current_user_info_user_me_get",
         "responses": {
           "200": {
@@ -145,7 +161,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
       }
     },
     "/connections/status": {
@@ -162,7 +183,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
       }
     },
     "/connect/schwab": {
@@ -179,7 +205,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
       }
     },
     "/disconnect/schwab": {
@@ -196,7 +227,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
       }
     },
     "/reset/schwab": {
@@ -213,7 +249,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
       }
     },
     "/openapi.json": {

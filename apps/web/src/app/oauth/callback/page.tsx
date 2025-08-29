@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, ArrowLeft, CheckCircle, Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -60,21 +60,16 @@ function OAuthCallback() {
     switch (state) {
       case "loading":
         return (
-          <Card>
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center">
-                <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+          <Card className="border-0 shadow-lg">
+            <CardHeader className="text-center pb-4">
+              <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center">
+                <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
               </div>
-              <CardTitle>Processing Connection...</CardTitle>
-              <CardDescription>
-                Please wait while we complete your account connection.
+              <CardTitle className="text-lg">Connecting Account</CardTitle>
+              <CardDescription className="text-sm">
+                Securely processing your {connectionType || "broker"} connection
               </CardDescription>
             </CardHeader>
-            <CardContent className="text-center">
-              <p className="text-sm text-muted-foreground">
-                This should only take a few seconds.
-              </p>
-            </CardContent>
           </Card>
         );
 

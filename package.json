@@ -1,25 +1,27 @@
 {
-	"name": "axiom",
-	"private": true,
-	"scripts": {
-		"build": "turbo run build",
-		"dev": "turbo run dev",
-		"lint": "turbo run lint",
-		"format": "turbo run format",
-		"typecheck": "turbo run typecheck",
-		"api": "turbo run api"
-	},
-	"devDependencies": {
-		"prettier": "^3.6.2",
-		"turbo": "^2.5.6",
-		"typescript": "5.9.2"
-	},
-	"engines": {
-		"node": ">=22"
-	},
-	"packageManager": "bun@1.2.18",
-	"workspaces": [
-		"apps/*",
-		"packages/*"
-	]
+  "name": "axiom",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "turbo run format",
+    "typecheck": "turbo run typecheck",
+    "api": "turbo run api",
+    "ngrok": "ngrok http 3000",
+    "ngrok:stop": "pkill -f ngrok"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.6",
+    "typescript": "5.9.2"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "bun@1.2.18",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }

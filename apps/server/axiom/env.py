@@ -1,8 +1,9 @@
 import os
 from typing import Optional
+from urllib.parse import urlparse, urlunparse
 
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field, HttpUrl, validator
+from pydantic import BaseModel, Field, HttpUrl, field_validator
 
 load_dotenv()
 
@@ -55,25 +56,35 @@ class Environment(BaseModel):
     ENVIRONMENT: str = Field(default="development", description="Current environment")
     DEBUG: bool = Field(default=True, description="Enable debug mode")
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    model_config = {
+        "env_file": ".env",
+        "case_sensitive": True,
+    }
 
-    @validator("SCHWAB_CALLBACK_URL", always=True)
-    def set_schwab_callback_url(cls, v, values):
+    @field_validator("SCHWAB_CALLBACK_URL", mode="before")
+    @classmethod
+    def set_schwab_callback_url(cls, v, info):
         """Auto-generate Schwab callback URL if not provided."""
-        if v is None and "API_URL" in values:
-            return f"{values['API_URL']}/api/auth/schwab/callback"
+        if v is None and info.data and "APP_URL" in info.data:
+            parsed = urlparse(str(info.data["APP_URL"]))
+            if parsed.hostname == "localhost":
+                parsed = parsed._replace(
+                    netloc=f"127.0.0.1:{parsed.port}", scheme="https"
+                )
+            base_url = urlunparse(parsed).rstrip("/")
+            return f"{base_url}/api/auth/schwab/callback"
         return v
 
-    @validator("DEBUG")
+    @field_validator("DEBUG", mode="before")
+    @classmethod
     def parse_debug(cls, v):
         """Parse DEBUG from string to boolean."""
         if isinstance(v, str):
             return v.lower() in ("true", "1", "yes", "on")
         return v
 
-    @validator("ENVIRONMENT")
+    @field_validator("ENVIRONMENT")
+    @classmethod
     def validate_environment(cls, v):
         """Validate environment is one of expected values."""
         valid_envs = ["development", "staging", "production"]

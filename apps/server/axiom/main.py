@@ -1,14 +1,16 @@
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from axiom.api.auth.schwab import router as schwab_auth_router
-from axiom.auth import require_auth, require_auth_cookies
+from axiom.auth import require_auth
 from axiom.config import supabase
 from axiom.db.client import get_db
+from axiom.db.models.oauth import OAuthState
 from axiom.env import env
-from axiom.schwab import schwab_auth_service
+from axiom.mdata.auth import SchwabAuthService
 
 app = FastAPI(title="Axiom Server", version="0.1.0")
 
@@ -63,9 +65,9 @@ async def get_user_profile(
 
 
 @app.get("/user/me")
-async def get_current_user_info(current_user=require_auth_cookies()):
+async def get_current_user_info(current_user=require_auth()):
     """
-    Get current user info using cookie auth (for testing)
+    Get current user info using header auth
     """
     return {
         "id": current_user.id,
@@ -74,10 +76,12 @@ async def get_current_user_info(current_user=require_auth_cookies()):
 
 
 @app.get("/connections/status")
-async def get_connection_status(current_user=require_auth_cookies()):
+async def get_connection_status(current_user=require_auth()):
     """
     Get status of all supported connections
     """
+    schwab_auth_service = SchwabAuthService()
+
     connections = {}
 
     # Check Schwab connection (only for owner)
@@ -109,10 +113,13 @@ async def get_connection_status(current_user=require_auth_cookies()):
 
 
 @app.post("/connect/schwab")
-async def connect_schwab(current_user=require_auth_cookies()):
+async def connect_schwab(
+    current_user=require_auth(), db: AsyncSession = Depends(get_db)
+):
     """
     Connect Schwab account - validates owner internally and returns auth URL
     """
+    schwab_auth_service = SchwabAuthService()
 
     # Check if user is owner
     if current_user.id != env.OWNER_ID:
@@ -127,12 +134,12 @@ async def connect_schwab(current_user=require_auth_cookies()):
         return {"connected": True, "message": "Schwab account already connected"}
 
     # Generate auth URL
-    auth_url, state = schwab_auth_service.generate_auth_url(current_user.id)
+    auth_url, state = await schwab_auth_service.generate_auth_url(current_user.id, db)
     return {"connected": False, "auth_url": auth_url, "state": state}
 
 
 @app.delete("/disconnect/schwab")
-async def disconnect_schwab(current_user=require_auth_cookies()):
+async def disconnect_schwab(current_user=require_auth()):
     """
     Disconnect Schwab account - validates owner internally
     """
@@ -153,7 +160,9 @@ async def disconnect_schwab(current_user=require_auth_cookies()):
 
 
 @app.post("/reset/schwab")
-async def reset_schwab_connection(current_user=require_auth_cookies()):
+async def reset_schwab_connection(
+    current_user=require_auth(), db: AsyncSession = Depends(get_db)
+):
     """
     Reset Schwab connection - clears all auth data including tokens and OAuth states
     """
@@ -172,9 +181,10 @@ async def reset_schwab_connection(current_user=require_auth_cookies()):
         supabase.postgrest.table("vault").delete().eq("id", vault_key).execute()
 
         # Clear any pending OAuth states for this user
-        supabase.postgrest.table("oauth_states").delete().eq(
-            "user_id", current_user.id
-        ).execute()
+        await db.execute(
+            delete(OAuthState).where(OAuthState.user_id == current_user.id)
+        )
+        await db.commit()
 
         return {"message": "Schwab connection reset successfully"}
     except Exception as e:

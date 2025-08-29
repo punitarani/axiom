@@ -40,6 +40,10 @@ export type SchwabOauthCallbackApiAuthSchwabCallbackGetData = {
      * State
      */
     state: string;
+    /**
+     * Session
+     */
+    session?: string | null;
   };
   url: "/api/auth/schwab/callback";
 };

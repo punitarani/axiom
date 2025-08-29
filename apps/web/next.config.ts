@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
+import { env } from "@/env";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  allowedDevOrigins: [env.NEXT_PUBLIC_API_URL],
 };
 
 export default nextConfig;
