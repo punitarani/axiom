@@ -9,6 +9,7 @@ from sqlalchemy import (
     Boolean,
     CheckConstraint,
     ForeignKey,
+    Index,
     Integer,
     String,
 )
@@ -31,7 +32,7 @@ class LevelOne(Base):
         nullable=False,
     )
     timestamp: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True), nullable=False
+        TIMESTAMP(timezone=True), nullable=False, primary_key=True
     )
     instrument_type: Mapped[InstrumentType] = mapped_column(
         String(10), nullable=False, default=InstrumentType.EQUITY
@@ -80,6 +81,16 @@ class LevelOne(Base):
         CheckConstraint("last_size >= 0", name="ck_level_one_last_size_non_negative"),
         CheckConstraint(
             "daily_volume >= 0", name="ck_level_one_daily_volume_non_negative"
+        ),
+        Index(
+            "ix_level_one_security_timestamp",
+            "security_id",
+            "timestamp",
+        ),
+        Index(
+            "ix_level_one_timestamp_brin",
+            "timestamp",
+            postgresql_using="brin",
         ),
         {"postgresql_partition_by": "RANGE (timestamp)"},
     )

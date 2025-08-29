@@ -3,6 +3,7 @@ from datetime import date, datetime, timezone
 from typing import Optional
 
 from sqlalchemy import (
+    NUMERIC,
     TIMESTAMP,
     BigInteger,
     Boolean,
@@ -44,7 +45,7 @@ class Security(Base):
     shares_outstanding: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
     is_shortable: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
     is_hard_to_borrow: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
-    htb_rate: Mapped[Optional[float]] = mapped_column(String(8), nullable=True)
+    htb_rate: Mapped[Optional[float]] = mapped_column(NUMERIC(8, 4), nullable=True)
     has_options: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     listing_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)

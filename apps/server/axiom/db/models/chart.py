@@ -8,6 +8,7 @@ from sqlalchemy import (
     Boolean,
     CheckConstraint,
     ForeignKey,
+    Index,
     Integer,
     String,
     UniqueConstraint,
@@ -31,7 +32,7 @@ class Chart(Base):
         nullable=False,
     )
     timestamp: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True), nullable=False
+        TIMESTAMP(timezone=True), nullable=False, primary_key=True
     )
     timeframe: Mapped[Timeframe] = mapped_column(String(10), nullable=False)
     instrument_type: Mapped[InstrumentType] = mapped_column(
@@ -70,5 +71,16 @@ class Chart(Base):
             "high_price >= low_price", name="ck_chart_high_greater_than_low"
         ),
         CheckConstraint("volume >= 0", name="ck_chart_volume_non_negative"),
+        Index(
+            "ix_chart_security_timeframe_timestamp",
+            "security_id",
+            "timeframe",
+            "timestamp",
+        ),
+        Index(
+            "ix_chart_timestamp_brin",
+            "timestamp",
+            postgresql_using="brin",
+        ),
         {"postgresql_partition_by": "RANGE (timestamp)"},
     )

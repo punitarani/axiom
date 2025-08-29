@@ -9,6 +9,7 @@ from sqlalchemy import (
     Boolean,
     CheckConstraint,
     ForeignKey,
+    Index,
     Integer,
     String,
 )
@@ -31,7 +32,7 @@ class OptionQuote(Base):
         nullable=False,
     )
     timestamp: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True), nullable=False
+        TIMESTAMP(timezone=True), nullable=False, primary_key=True
     )
     bid_price: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
     bid_size: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
@@ -92,6 +93,16 @@ class OptionQuote(Base):
         ),
         CheckConstraint(
             "open_interest >= 0", name="ck_option_quote_open_interest_non_negative"
+        ),
+        Index(
+            "ix_option_quote_contract_timestamp",
+            "option_contract_id",
+            "timestamp",
+        ),
+        Index(
+            "ix_option_quote_timestamp_brin",
+            "timestamp",
+            postgresql_using="brin",
         ),
         {"postgresql_partition_by": "RANGE (timestamp)"},
     )

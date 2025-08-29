@@ -7,6 +7,7 @@ from sqlalchemy import (
     BigInteger,
     CheckConstraint,
     ForeignKey,
+    Index,
     Integer,
     String,
     UniqueConstraint,
@@ -30,7 +31,7 @@ class LevelTwo(Base):
         nullable=False,
     )
     timestamp: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True), nullable=False
+        TIMESTAMP(timezone=True), nullable=False, primary_key=True
     )
     instrument_type: Mapped[InstrumentType] = mapped_column(
         String(10), nullable=False, default=InstrumentType.EQUITY
@@ -64,6 +65,16 @@ class LevelTwo(Base):
         CheckConstraint("order_count > 0", name="ck_level_two_order_count_positive"),
         CheckConstraint(
             "level_index >= 0", name="ck_level_two_level_index_non_negative"
+        ),
+        Index(
+            "ix_level_two_security_timestamp",
+            "security_id",
+            "timestamp",
+        ),
+        Index(
+            "ix_level_two_timestamp_brin",
+            "timestamp",
+            postgresql_using="brin",
         ),
         {"postgresql_partition_by": "RANGE (timestamp)"},
     )
