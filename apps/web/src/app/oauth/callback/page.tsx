@@ -20,6 +20,7 @@ function OAuthCallback() {
   const [state, setState] = useState<CallbackState>("loading");
   const [error, setError] = useState<string>("");
   const [connectionType, setConnectionType] = useState<string>("");
+  const [countdown, setCountdown] = useState<number>(3);
 
   useEffect(() => {
     const handleOAuthCallback = () => {
@@ -43,10 +44,19 @@ function OAuthCallback() {
       if (successParam === "true") {
         setState("success");
 
-        // Auto-redirect after 3 seconds
-        setTimeout(() => {
-          router.push("/");
-        }, 3000);
+        // Start countdown timer and redirect
+        let timeLeft = 3;
+        setCountdown(timeLeft);
+        
+        const timer = setInterval(() => {
+          timeLeft -= 1;
+          setCountdown(timeLeft);
+          
+          if (timeLeft <= 0) {
+            clearInterval(timer);
+            router.push("/");
+          }
+        }, 1000);
       } else {
         setError("Unknown callback state");
         setState("error");
@@ -101,7 +111,7 @@ function OAuthCallback() {
               </div>
 
               <p className="text-xs text-muted-foreground">
-                Redirecting automatically in 3 seconds...
+                Redirecting automatically in {countdown} second{countdown !== 1 ? 's' : ''}...
               </p>
             </CardContent>
           </Card>

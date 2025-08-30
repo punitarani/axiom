@@ -13,6 +13,7 @@ from alembic import context
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 # Import all models to ensure they're registered with SQLAlchemy
+import axiom.db.models  # noqa: F401
 from axiom.db.client import Base
 from axiom.env import env
 

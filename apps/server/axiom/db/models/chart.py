@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from sqlalchemy import (
+    DDL,
     TIMESTAMP,
     BigInteger,
     Boolean,
@@ -12,11 +13,13 @@ from sqlalchemy import (
     Integer,
     String,
     UniqueConstraint,
+    event,
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from axiom.db.client import Base
+from axiom.db.models._partitions import ensure_partition_for_timestamp
 from axiom.db.models.enums import InstrumentType, Timeframe
 
 
@@ -84,3 +87,16 @@ class Chart(Base):
         ),
         {"postgresql_partition_by": "RANGE (timestamp)"},
     )
+
+
+event.listen(
+    Chart.__table__,
+    "after_create",
+    DDL('CREATE TABLE IF NOT EXISTS "charts_default" PARTITION OF "charts" DEFAULT'),
+)
+
+
+@event.listens_for(Chart, "before_insert")
+def chart_before_insert(mapper, connection, target):  # type: ignore[no-redef]
+    ts = getattr(target, "timestamp", None) or datetime.now(timezone.utc)
+    ensure_partition_for_timestamp(connection, "charts", ts)

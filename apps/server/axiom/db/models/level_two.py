@@ -11,11 +11,13 @@ from sqlalchemy import (
     Integer,
     String,
     UniqueConstraint,
+    event,
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from axiom.db.client import Base
+from axiom.db.models._partitions import ensure_partition_for_timestamp
 from axiom.db.models.enums import InstrumentType, OrderSide
 
 
@@ -78,3 +80,16 @@ class LevelTwo(Base):
         ),
         {"postgresql_partition_by": "RANGE (timestamp)"},
     )
+
+
+@event.listens_for(LevelTwo.__table__, "before_create")
+def level_two_before_create(target, connection, **kw):  # type: ignore[no-redef]
+    connection.exec_driver_sql(
+        'CREATE TABLE IF NOT EXISTS "level_two_quotes_default" PARTITION OF "level_two_quotes" DEFAULT'
+    )
+
+
+@event.listens_for(LevelTwo, "before_insert")
+def level_two_before_insert(mapper, connection, target):  # type: ignore[no-redef]
+    ts = getattr(target, "timestamp", None) or datetime.now(timezone.utc)
+    ensure_partition_for_timestamp(connection, "level_two_quotes", ts)

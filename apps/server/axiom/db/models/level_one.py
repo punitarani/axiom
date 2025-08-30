@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from sqlalchemy import (
+    DDL,
     NUMERIC,
     TIMESTAMP,
     BigInteger,
@@ -12,11 +13,13 @@ from sqlalchemy import (
     Index,
     Integer,
     String,
+    event,
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from axiom.db.client import Base
+from axiom.db.models._partitions import ensure_partition_for_timestamp
 from axiom.db.models.enums import InstrumentType, SecurityStatus
 
 
@@ -94,3 +97,21 @@ class LevelOne(Base):
         ),
         {"postgresql_partition_by": "RANGE (timestamp)"},
     )
+
+
+# Create DEFAULT partition at table create time (idempotent)
+event.listen(
+    LevelOne.__table__,
+    "after_create",
+    DDL(
+        'CREATE TABLE IF NOT EXISTS "level_one_quotes_default" '
+        'PARTITION OF "level_one_quotes" DEFAULT'
+    ),
+)
+
+
+# Create daily partition right before insert (idempotent)
+@event.listens_for(LevelOne, "before_insert")
+def level_one_before_insert(mapper, connection, target):  # type: ignore[no-redef]
+    ts = getattr(target, "timestamp", None) or datetime.now(timezone.utc)
+    ensure_partition_for_timestamp(connection, "level_one_quotes", ts)

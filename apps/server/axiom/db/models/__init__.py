@@ -21,6 +21,7 @@ from axiom.db.models.oauth import OAuthState
 from axiom.db.models.option_contract import OptionContract
 from axiom.db.models.option_quote import OptionQuote
 from axiom.db.models.security import Security
+from axiom.db.models.subscription import StreamSubscription
 from axiom.db.models.transaction import Transaction
 
 __all__ = [
@@ -46,4 +47,5 @@ __all__ = [
     "Timeframe",
     "Transaction",
     "TransactionType",
+    "StreamSubscription",
 ]

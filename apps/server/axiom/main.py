@@ -152,8 +152,10 @@ async def disconnect_schwab(current_user=require_auth()):
         )
 
     try:
-        vault_key = f"schwab_tokens_{current_user.id}"
-        supabase.postgrest.table("vault").delete().eq("id", vault_key).execute()
+        vault_name = f"schwab_tokens_{current_user.id}"
+        supabase.postgrest.schema("vault").from_("secrets").delete().eq(
+            "name", vault_name
+        ).execute()
         return {"message": "Schwab account disconnected successfully"}
     except Exception as e:
         return {"error": f"Failed to disconnect: {str(e)}"}
@@ -175,10 +177,12 @@ async def reset_schwab_connection(
         )
 
     try:
-        vault_key = f"schwab_tokens_{current_user.id}"
+        vault_name = f"schwab_tokens_{current_user.id}"
 
-        # Clear tokens from vault
-        supabase.postgrest.table("vault").delete().eq("id", vault_key).execute()
+        # Clear tokens from Supabase Vault by name
+        supabase.postgrest.schema("vault").from_("secrets").delete().eq(
+            "name", vault_name
+        ).execute()
 
         # Clear any pending OAuth states for this user
         await db.execute(
